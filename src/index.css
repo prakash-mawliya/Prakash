@@ -82,6 +82,7 @@
   grid-template-columns: repeat(1, 1fr);
   gap: 1.5rem;
   margin-bottom: 3rem;
+  justify-content: center;
 }
 
 @media (min-width: 768px) {
@@ -318,6 +319,12 @@ body {
 section {
   padding: 8rem 10%;
   padding-bottom: 4rem;
+}
+
+@media (max-width: 768px) {
+  section {
+    padding: 4rem 1.5rem;
+  }
 }
 
 /* Typography */
@@ -1022,6 +1029,7 @@ html.dark .theme-toggle-btn:hover {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
+  justify-content: center;
   margin-bottom: 5rem;
 }
 
@@ -1262,6 +1270,7 @@ html.dark .theme-toggle-btn:hover {
   max-width: 1400px;
   margin: 0 auto;
 }
+  justify-content: center;
 
 /* Featured Projects */
 .project-grid {
@@ -1385,6 +1394,7 @@ html.dark .theme-toggle-btn:hover {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   max-width: 1200px;
+  justify-content: center;
   margin: 0 auto;
 }
 
