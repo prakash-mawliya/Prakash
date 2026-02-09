@@ -16,17 +16,24 @@ function App() {
     let observer;
 
     const initObserver = () => {
-      // Check if mobile/tablet (match your CSS break points roughly)
-      if (window.matchMedia("(min-width: 1025px)").matches) return;
-
+      
       const options = {
         root: null,
-        rootMargin: '-15% 0px -15% 0px', // Highlight when element is in the middle 70% of screen
+        rootMargin: '-20% 0px -20% 0px', // Increased focus area (middle 60% of screen) for better trigger
         threshold: 0.15
       };
 
       observer = new IntersectionObserver((entries) => {
+        // Dynamic check inside the callback so it works even if you resize/inspect without refresh
+        const isMobile = window.innerWidth <= 1024;
+        
         entries.forEach((entry) => {
+          // If on desktop, remove the class to be safe and do nothing else
+          if (!isMobile) {
+            entry.target.classList.remove('mobile-hover');
+            return;
+          }
+
           if (entry.isIntersecting) {
             entry.target.classList.add('mobile-hover');
           } else {
