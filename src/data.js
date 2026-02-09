@@ -38,7 +38,7 @@ export const userData = {
       title: "AI Diet Planner",
       desc: "Full Stack Web Application designed and developed following SDLC practices. Implemented REST APIs, performed unit-level testing, built responsive UI, and ensured data validation and error handling.",
       tech: ["React", "Node.js", "Express", "MongoDB"],
-      github: "#",
+      github: "https://github.com/prakash-mawliya/AI-DITE-PLANER",
       demo: "https://ai-diet-planner-sigma.vercel.app/",
       imageUrl: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=600&auto=format&fit=crop"
     },
