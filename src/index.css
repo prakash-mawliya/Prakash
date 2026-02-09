@@ -2148,3 +2148,14 @@ html.dark .theme-toggle-btn:hover {
   animation: blink-animation 0.5s ease-in-out infinite;
   transform-origin: center;
 }
+
+
+/* Resume Card Hover Effect */
+.resume-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.resume-card:hover {
+  transform: translateY(-10px) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}

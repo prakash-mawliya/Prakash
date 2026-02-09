@@ -26,34 +26,46 @@ const ResumeSection = () => {
     }
   ];
 
-  const getIcon = (type) => {
+  const getIconData = (type) => {
     switch(type) {
       case 'data':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#10b981' }}>
-            <line x1="18" y1="20" x2="18" y2="10"></line>
-            <line x1="12" y1="20" x2="12" y2="4"></line>
-            <line x1="6" y1="20" x2="6" y2="14"></line>
-          </svg>
-        );
+        return {
+          color: '#10b981',
+          bg: 'rgba(16, 185, 129, 0.1)',
+          icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          )
+        };
       case 'code':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#3b82f6' }}>
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-        );
+        return {
+          color: '#3b82f6',
+          bg: 'rgba(59, 130, 246, 0.1)',
+          icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          )
+        };
       case 'general':
       default:
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ef4444' }}>
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <line x1="10" y1="9" x2="8" y2="9"></line>
-          </svg>
-        );
+        return {
+          color: '#ef4444',
+          bg: 'rgba(239, 68, 68, 0.1)',
+          icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <line x1="10" y1="9" x2="8" y2="9"></line>
+            </svg>
+          )
+        };
     }
   };
 
@@ -68,50 +80,48 @@ const ResumeSection = () => {
         </div>
 
         <div className="resumes-grid" style={styles.grid}>
-          {resumes.map((resume) => (
-            <div 
-              key={resume.id} 
-              className="resume-card" 
-              style={styles.card}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-10px)';
-                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
-              }}
-            >
-              <div className="icon-wrapper" style={styles.iconWrapper}>
-                {getIcon(resume.type)}
-              </div>
-              
-              <h3 style={styles.cardTitle}>{resume.name}</h3>
-              <p style={styles.cardDesc}>{resume.description}</p>
-              
-              <div className="card-actions" style={styles.actions}>
-                <a 
-                  href={`/resumes/${resume.fileName}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  style={styles.btnView}
-                  className="btn-view"
+          {resumes.map((resume) => {
+            const { icon, color, bg } = getIconData(resume.type);
+            return (
+              <div 
+                key={resume.id} 
+                className="resume-card" 
+                style={styles.card}
+              >
+                <div 
+                  className="icon-wrapper" 
+                  style={{...styles.iconWrapper, backgroundColor: bg, color: color}}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                  View
-                </a>
-                <a 
-                  href={`/resumes/${resume.fileName}`} 
-                  download
-                  style={styles.btnDownload}
-                  className="btn-download"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  Download
-                </a>
+                  {icon}
+                </div>
+                
+                <h3 style={styles.cardTitle}>{resume.name}</h3>
+                <p style={styles.cardDesc}>{resume.description}</p>
+                
+                <div className="card-actions" style={styles.actions}>
+                  <a 
+                    href={`/resumes/${resume.fileName}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={styles.btnView}
+                    className="btn-view"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    View
+                  </a>
+                  <a 
+                    href={`/resumes/${resume.fileName}`} 
+                    download
+                    style={styles.btnDownload}
+                    className="btn-download"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
