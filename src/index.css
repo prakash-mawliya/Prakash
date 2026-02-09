@@ -1591,8 +1591,8 @@ html.dark .theme-toggle-btn:hover {
 
 .timeline-card:hover,
 .timeline-card.mobile-hover {
-  transform: translateY(-4px) scale(1.02);
-  border-color: rgba(37, 99, 235, 0.5);5
+  transform: translateY(-4px) scale(1.05);
+  border-color: rgba(37, 99, 235, 0.5);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
