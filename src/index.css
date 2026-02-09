@@ -2136,3 +2136,15 @@ html.dark .theme-toggle-btn:hover {
     font-size: 1.2rem;
   }
 }
+
+
+/* Resume Section Animations */
+@keyframes blink-animation {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+.btn-view:hover svg {
+  animation: blink-animation 0.5s ease-in-out infinite;
+  transform-origin: center;
+}
