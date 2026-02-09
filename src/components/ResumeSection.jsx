@@ -5,15 +5,21 @@ const ResumeSection = () => {
   const resumes = [
     {
       id: 1,
-      name: 'Resume 1',
+      name: 'General Resume',
       description: 'Prakash Resume (Version 1)',
       fileName: 'Prakash_Resume_1.pdf' 
     },
     {
       id: 2,
-      name: 'Resume 2',
+      name: 'Data Analyst Resume',
       description: 'Prakash Resume (Version 2)',
       fileName: 'Prakash_Resume_2.pdf'
+    },
+    {
+      id: 3,
+      name: 'Full Stack Resume',
+      description: 'Full Stack Web Developer Resume',
+      fileName: 'Prakash_FullStack_Resume.pdf'
     }
   ];
 
