@@ -7,21 +7,55 @@ const ResumeSection = () => {
       id: 1,
       name: 'General Resume',
       description: 'Prakash Resume (Version 1)',
-      fileName: 'Prakash_Resume_1.pdf' 
+      fileName: 'Prakash_Resume_1.pdf',
+      type: 'general' 
     },
     {
       id: 2,
       name: 'Data Analyst Resume',
       description: 'Prakash Resume (Version 2)',
-      fileName: 'Prakash_Resume_2.pdf'
+      fileName: 'Prakash_Resume_2.pdf',
+      type: 'data'
     },
     {
       id: 3,
       name: 'Full Stack Resume',
       description: 'Full Stack Web Developer Resume',
-      fileName: 'Prakash_FullStack_Resume.pdf'
+      fileName: 'Prakash_FullStack_Resume.pdf',
+      type: 'code'
     }
   ];
+
+  const getIcon = (type) => {
+    switch(type) {
+      case 'data':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#10b981' }}>
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        );
+      case 'code':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#3b82f6' }}>
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+        );
+      case 'general':
+      default:
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ef4444' }}>
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <line x1="10" y1="9" x2="8" y2="9"></line>
+          </svg>
+        );
+    }
+  };
 
   return (
     <section id="resumes" className="resume-section" style={styles.section}>
@@ -35,16 +69,21 @@ const ResumeSection = () => {
 
         <div className="resumes-grid" style={styles.grid}>
           {resumes.map((resume) => (
-            <div key={resume.id} className="resume-card" style={styles.card}>
+            <div 
+              key={resume.id} 
+              className="resume-card" 
+              style={styles.card}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-10px)';
+                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)';
+              }}
+            >
               <div className="icon-wrapper" style={styles.iconWrapper}>
-                {/* PDF Icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ef4444' }}>
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                  <line x1="10" y1="9" x2="8" y2="9"></line>
-                </svg>
+                {getIcon(resume.type)}
               </div>
               
               <h3 style={styles.cardTitle}>{resume.name}</h3>
