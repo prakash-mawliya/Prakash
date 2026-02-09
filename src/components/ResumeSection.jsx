@@ -5,21 +5,15 @@ const ResumeSection = () => {
   const resumes = [
     {
       id: 1,
-      name: 'Full Stack Developer',
-      description: 'Focus on MERN Stack (React, Node, MongoDB) and Web Development.',
-      fileName: 'Prakash_FullStack_Resume.pdf' 
+      name: 'Resume 1',
+      description: 'Prakash Resume (Version 1)',
+      fileName: 'Prakash_Resume_1.pdf' 
     },
     {
       id: 2,
-      name: 'Data Scientist / ML',
-      description: 'Highlighting Machine Learning projects, Python, and Data Analysis skills.',
-      fileName: 'Prakash_ML_Resume.pdf'
-    },
-    {
-      id: 3,
-      name: 'General Resume',
-      description: 'Comprehensive overview of all skills and experience.',
-      fileName: 'Prakash_General_Resume.pdf'
+      name: 'Resume 2',
+      description: 'Prakash Resume (Version 2)',
+      fileName: 'Prakash_Resume_2.pdf'
     }
   ];
 
