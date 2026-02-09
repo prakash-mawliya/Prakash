@@ -1280,7 +1280,7 @@ html.dark .theme-toggle-btn:hover {
 
 .project-card:hover,
 .project-card.mobile-hover {
-  transform: translateY(-5px) scale(1.02);
+  transform: translateY(-5px) scale(1.05);
   border-color: var(--primary);
 }
 
@@ -1398,10 +1398,9 @@ html.dark .theme-toggle-btn:hover {
   transition: 0.3s ease;
   height: 100%;
 }
-,
 .tech-card.mobile-hover,
 .tech-card:hover {
-  transform: translateY(-5px) scale(1.02);
+  transform: translateY(-5px) scale(1.05);
   border-color: var(--primary);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
@@ -1593,7 +1592,7 @@ html.dark .theme-toggle-btn:hover {
 .timeline-card:hover,
 .timeline-card.mobile-hover {
   transform: translateY(-4px) scale(1.02);
-  border-color: rgba(37, 99, 235, 0.5);
+  border-color: rgba(37, 99, 235, 0.5);5
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
@@ -1750,7 +1749,7 @@ html.dark .theme-toggle-btn:hover {
 
 .achievement-card:hover,
 .achievement-card.mobile-hover {
-  transform: translateY(-5px) scale(1.02);
+  transform: translateY(-5px) scale(1.05);
   border-color: rgba(37, 99, 235, 0.5);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
