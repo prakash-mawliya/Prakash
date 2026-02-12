@@ -1,13 +1,54 @@
+import { motion } from 'framer-motion';
 import { userData } from '../data';
 
 const Projects = () => {
+  // Stagger animation variants for the container
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  // Animation variants for each project card
+  const cardVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
   return (
     <section className="portfolio" id="projects">
-      <h2 className="heading">Featured <span>Projects</span></h2>
+      <motion.h2 
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        className="heading"
+      >
+        Featured <span>Projects</span>
+      </motion.h2>
 
-      <div className="project-grid">
+      <motion.div 
+        className="project-grid"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
         {userData.projects.map((project) => (
-          <div className="project-card" key={project.id}>
+          <motion.div 
+            className="project-card" 
+            key={project.id}
+            variants={cardVariants}
+            whileHover={{ y: -10, transition: { duration: 0.2 } }}
+          >
              <div 
                 className="project-img" 
                 style={{backgroundImage: `url(${project.imageUrl || 'https://via.placeholder.com/400'})`}}
@@ -25,9 +66,9 @@ const Projects = () => {
                     <a href={project.demo} target="_blank" rel="noreferrer" className="link-btn">Live Demo</a>
                 </div>
              </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 };

@@ -1,12 +1,18 @@
+import { motion } from 'framer-motion';
 import { userData } from '../data';
 
-const Hero = () => {
+const Hero = () => {  
   return (
     <section id="hero" className="hero-section">
       <div className="hero-container">
         
         {/* Left Column: Content */}
-        <div className="hero-content">
+        <motion.div 
+          className="hero-content"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
           
           <div className="hero-status-badge">
             <span className="status-dot"></span>
@@ -19,13 +25,13 @@ const Hero = () => {
           </h1>
 
           <div className="typing-container">
-            <span className="typing-text">Full Stack Web Developer | Data Analyst </span>
+            <span className="typing-text">Full Stack Developer | Data Analyst</span>
             <span className="cursor">|</span>
           </div>
 
           <p className="hero-description">
-            Passionately building scalable web applications with AI integration.
-            <br className="hidden-mobile"/> Turning complex problems into elegant solutions.
+            {userData.tagline}
+            <br className="hidden-mobile"/> Passionately building scalable web applications with AI integration.
           </p>
 
           <div className="hero-socials">
@@ -45,10 +51,15 @@ const Hero = () => {
             <a href="#resumes" className="btn-secondary">Resume</a>
           </div>
         
-        </div>
+        </motion.div>
 
         {/* Right Column: Image */}
-        <div className="hero-image-container">
+        <motion.div 
+          className="hero-image-container"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        >
           <div className="profile-wrapper">
              {/* Using GitHub avatar as robust placeholder */}
             <img 
@@ -63,12 +74,16 @@ const Hero = () => {
             <div className="profile-glow"></div>
             
             {/* Floating Badge */}
-            <div className="floating-badge">
+            <motion.div 
+              className="floating-badge"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+            >
                 <span className="badge-icon">💻</span>
                 Developer
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>

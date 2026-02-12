@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 
 const About = () => {
   const stats = [
@@ -70,29 +71,76 @@ const About = () => {
 
   return (
     <section id="about" className="about-section">
-      <div className="about-bg-orb orb-1"></div>
-      <div className="about-bg-orb orb-2"></div>
+      <motion.div 
+        className="about-bg-orb orb-1"
+        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.7, 0.5] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      ></motion.div>
+      <motion.div 
+        className="about-bg-orb orb-2"
+        animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.7, 0.5] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      ></motion.div>
 
       <div className="about-container">
         
         {/* Header */}
         <div className="about-header">
-          <h2 className="section-title">
+          <motion.h2 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="section-title"
+          >
             About <span className="highlight-cyan">Me</span>
-          </h2>
+          </motion.h2>
           <div className="title-underline"></div>
           
-          <div className="about-bio">
+          <motion.div 
+            className="about-bio"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
             <p>
               Aspiring Software Development Engineer with a strong foundation in Data Structures, Algorithms, and Full Stack Development. I specialize in architecting scalable web solutions and integrating Agentic AI systems. With a focus on performance optimization and clean code, I bridge the gap between complex backend logic and intuitive user experiences.
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Stats Grid */}
-        <div className="stats-grid-v2">
+        <motion.div 
+          className="stats-grid-v2"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+          }}
+        >
           {stats.map((stat, index) => (
-            <div className={`stat-card-v2 ${index === 0 ? 'highlight-card' : ''}`} key={stat.id}>
+            <motion.div 
+              className={`stat-card-v2 ${index === 0 ? 'highlight-card' : ''}`} 
+              key={stat.id}
+              variants={{
+                hidden: { y: 30, opacity: 0 },
+                visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 50 } }
+              }}
+              whileHover={{ scale: 1.05 }}
+              onClick={() => {
+                if(stat.label.includes("Hackathon")) {
+                    const section = document.getElementById('achievements');
+                    if(section) section.scrollIntoView({ behavior: 'smooth' });
+                } else if(stat.label.includes("Projects")) {
+                    const section = document.getElementById('projects');
+                    if(section) section.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              style={{ cursor: (stat.label.includes("Hackathon") || stat.label.includes("Projects")) ? 'pointer' : 'default' }}
+            >
                <div className="card-hover-line"></div>
                {index === 0 && <div className="card-corner-glow"></div>}
 
@@ -104,9 +152,9 @@ const About = () => {
                 <h3 className="stat-value-v2">{stat.value}</h3>
                 <p className="stat-label-v2">{stat.label}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Quick Facts Section */}
         <div className="quick-facts-container">

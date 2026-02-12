@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 const Journey = () => {
@@ -54,8 +55,24 @@ const Journey = () => {
         
         {/* Header */}
         <div className="journey-header">
-          <h2 className="heading">My <span>Journey</span></h2>
-          <p className="journey-subtitle">From learning foundations to building real-world solutions</p>
+          <motion.h2 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="heading"
+          >
+            My <span>Journey</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="journey-subtitle"
+          >
+            From learning foundations to building real-world solutions
+          </motion.p>
         </div>
 
         {/* Tab Toggle */}
@@ -76,8 +93,15 @@ const Journey = () => {
 
         {/* Timeline */}
         <div className="timeline-container">
-          {data.map((item) => (
-            <div className="timeline-item" key={item.id}>
+          {data.map((item, index) => (
+            <motion.div 
+              className="timeline-item" 
+              key={item.id}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true, margin: "-50px" }}
+            >
               {/* Marker on the line */}
               <div className="timeline-marker"></div>
 
@@ -116,7 +140,7 @@ const Journey = () => {
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

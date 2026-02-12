@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 const Contact = () => {
@@ -46,14 +47,36 @@ const Contact = () => {
         
         {/* Header */}
         <div className="contact-header">
-          <h2 className="heading">Let's <span style={{ color: '#2563EB' }}>Connect</span></h2>
-          <p className="contact-subtitle">I’m always open to discussing new projects, creative ideas, or opportunities</p>
+          <motion.h2 
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="heading"
+          >
+            Let's <span style={{ color: '#2563EB' }}>Connect</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="contact-subtitle"
+          >
+            I’m always open to discussing new projects, creative ideas, or opportunities
+          </motion.p>
         </div>
 
         <div className="contact-grid">
           
           {/* Left Column: Info */}
-          <div className="contact-info-card">
+          <motion.div 
+            className="contact-info-card"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             <div className="status-badge">
               <span className="pulsing-dot"></span>
               Available for opportunities
@@ -102,10 +125,17 @@ const Contact = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
               </a>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Form */}
-          <form className="contact-form-card" onSubmit={handleSubmit}>
+          <motion.form 
+            className="contact-form-card" 
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
             <h3 className="form-title">Send a Quick Message</h3>
             
             <div className="form-group">
@@ -151,7 +181,7 @@ const Contact = () => {
               <span>Send Message</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" x2="11" y1="2" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
-          </form>
+          </motion.form>
 
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 const Skills = () => {
   const [activeTab, setActiveTab] = useState('All');
@@ -86,8 +87,24 @@ const Skills = () => {
   return (
     <section id="skills" className="tech-section">
       <div className="tech-header-container">
-        <h2 className="heading">Tech <span>Stack</span></h2>
-        <p className="tech-subtitle">A comprehensive toolkit spanning web development, AI, and data technologies</p>
+        <motion.h2 
+          className="heading"
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+        >
+          Tech <span>Stack</span>
+        </motion.h2>
+        <motion.p 
+          className="tech-subtitle"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          A comprehensive toolkit spanning web development, AI, and data technologies
+        </motion.p>
       </div>
 
       <div className="tech-tabs">
