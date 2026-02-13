@@ -2184,3 +2184,112 @@ html.dark .theme-toggle-btn:hover {
   transform: translateY(-10px) !important;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
+
+/* =========================================
+   Responsive Mobile Improvements
+   ========================================= */
+
+@media (max-width: 768px) {
+  
+  /* Global Resets */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  section {
+    padding: 3rem 1.25rem !important; /* Force smaller padding on mobile */
+  }
+
+  /* Typography Scaling */
+  .heading {
+    font-size: 2.25rem !important;
+    margin-bottom: 2rem !important;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .hero-description {
+    font-size: 1rem !important;
+    max-width: 100%;
+  }
+
+  /* Background Elements */
+  .about-bg-orb, .hero-section::before {
+    width: 250px !important;
+    height: 250px !important;
+    filter: blur(60px) !important;
+  }
+
+  /* Grid Adjustments */
+  .project-grid, .tech-grid, .stats-grid-v2, .achievements-content-grid, .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    display: grid !important; /* Ensure grid display */
+  }
+
+  /* Hero Section Specifics */
+  .hero-container {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+    gap: 3rem !important;
+  }
+  
+  .hero-content {
+    align-items: center !important;
+  }
+  
+  .typing-container {
+    justify-content: center;
+  }
+
+  /* Timeline / Journey Fixes */
+  .timeline-container {
+    padding-left: 0.5rem !important;
+  }
+  
+  .timeline-item {
+    padding-left: 1.5rem !important; /* More space for text */
+    margin-bottom: 2.5rem !important;
+  }
+  
+  .timeline-marker {
+    left: -1rem !important; /* Re-align marker with line */
+  }
+  
+  /* Navbar */
+  .navbar-content {
+    padding: 0 1rem;
+  }
+
+  .mobile-menu {
+    width: 100vw;
+    left: 0;
+    padding-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+  
+  /* Resume Section */
+  .resume-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ultra-small devices */
+  .hero-title {
+    font-size: 2rem !important;
+  }
+  
+  .heading {
+    font-size: 2rem !important;
+  }
+  
+  .stat-card-v2 {
+    padding: 1rem !important;
+  }
+}
+
