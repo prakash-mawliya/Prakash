@@ -1953,6 +1953,11 @@ html.dark .theme-toggle-btn:hover {
   gap: 1rem;
 }
 
+/* Fix flex child not shrinking */
+.info-item > div:last-child {
+  min-width: 0;
+}
+
 .info-icon {
   width: 45px;
   height: 45px;
@@ -1979,6 +1984,7 @@ html.dark .theme-toggle-btn:hover {
 .info-value {
   font-weight: 500;
   color: var(--text-color);
+  word-break: break-all; /* Fix: Force break for long emails */
 }
 
 .social-links-row {
@@ -2201,6 +2207,11 @@ html.dark .theme-toggle-btn:hover {
     padding: 3rem 1.25rem !important; /* Force smaller padding on mobile */
   }
 
+  .hero-section {
+    padding-top: 8rem !important; /* Extra padding for fixed navbar */
+    align-items: flex-start !important; /* Start content from top (with padding) instead of center */
+  }
+
   /* Typography Scaling */
   .heading {
     font-size: 2.25rem !important;
@@ -2290,6 +2301,46 @@ html.dark .theme-toggle-btn:hover {
   
   .stat-card-v2 {
     padding: 1rem !important;
+  }
+
+  /* Trophy Scaling */
+  .trophy-ring {
+    width: 250px !important;
+    height: 250px !important;
+  }
+  
+  .trophy-icon-large {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  
+  .trophy-container {
+    height: 300px !important;
+  }
+
+  /* Achievement Card Compact Mode */
+  .achievement-card {
+    padding: 1rem !important; /* Reduce padding */
+    gap: 1rem !important; /* Reduce gap */
+  }
+
+  .achievement-icon-box {
+    min-width: 40px !important;
+    height: 40px !important;
+  }
+
+  .achievement-info h3 {
+    font-size: 1rem !important;
+  }
+  
+  .achievement-info p {
+    font-size: 0.85rem !important;
+  }
+  
+  /* Prevent horizontal overflow on long words/titles */
+  .achievement-info {
+    min-width: 0; /* Important for flex child truncation */
+    word-break: break-word;
   }
 }
 
