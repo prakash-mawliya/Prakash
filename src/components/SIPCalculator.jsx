@@ -1,32 +1,24 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const SIPCalculator = ({ isOpen, onClose }) => {
   const [investment, setInvestment] = useState(5000);
   const [rate, setRate] = useState(12);
   const [years, setYears] = useState(10);
   
-  const [result, setResult] = useState({
-    invested: 0,
-    returns: 0,
-    total: 0
-  });
+  const monthlyRate = rate / 12 / 100;
+  const months = years * 12;
+  const totalInvested = investment * months;
+  
+  // SIP Formula: P × ({[1 + i]^n - 1} / i) × (1 + i)
+  const futureValue = investment * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate);
+  const estReturns = futureValue - totalInvested;
 
-  useEffect(() => {
-    const monthlyRate = rate / 12 / 100;
-    const months = years * 12;
-    const totalInvested = investment * months;
-    
-    // SIP Formula: P × ({[1 + i]^n - 1} / i) × (1 + i)
-    const futureValue = investment * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) * (1 + monthlyRate);
-    const estReturns = futureValue - totalInvested;
-
-    setResult({
-      invested: Math.round(totalInvested),
-      returns: Math.round(estReturns),
-      total: Math.round(futureValue)
-    });
-  }, [investment, rate, years]);
+  const result = {
+    invested: Math.round(totalInvested),
+    returns: Math.round(estReturns),
+    total: Math.round(futureValue)
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {

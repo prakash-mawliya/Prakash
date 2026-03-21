@@ -1,32 +1,24 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const EMICalculator = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState(500000);
   const [rate, setRate] = useState(8.5);
   const [tenure, setTenure] = useState(5); // In Years
 
-  const [result, setResult] = useState({
-    emi: 0,
-    interest: 0,
-    total: 0
-  });
+  // EMI Formula: [P x R x (1+R)^N]/[(1+R)^N-1]
+  const r = rate / 12 / 100; // Monthly Interest Rate
+  const n = tenure * 12; // Months
 
-  useEffect(() => {
-    // EMI Formula: [P x R x (1+R)^N]/[(1+R)^N-1]
-    const r = rate / 12 / 100; // Monthly Interest Rate
-    const n = tenure * 12; // Months
+  const emi = amount * r * (Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
+  const totalPayment = emi * n;
+  const totalInterest = totalPayment - amount;
 
-    const emi = amount * r * (Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
-    const totalPayment = emi * n;
-    const totalInterest = totalPayment - amount;
-
-    setResult({
-      emi: Math.round(emi),
-      interest: Math.round(totalInterest),
-      total: Math.round(totalPayment)
-    });
-  }, [amount, rate, tenure]);
+  const result = {
+    emi: Math.round(emi),
+    interest: Math.round(totalInterest),
+    total: Math.round(totalPayment)
+  };
 
   const formatCurrency = (val) => {
     return new Intl.NumberFormat('en-IN', {

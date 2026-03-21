@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 const QRCodeGenerator = ({ isOpen, onClose }) => {
   const [text, setText] = useState('');
-  const [qrSize, setQrSize] = useState(250);
+  const [qrSize] = useState(250);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [loading, setLoading] = useState(false);
 

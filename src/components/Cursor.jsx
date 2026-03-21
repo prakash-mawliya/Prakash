@@ -75,9 +75,21 @@ const Cursor = () => {
   };
 
   // Only render on desktop
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia("(min-width: 768px)").matches;
+    }
+    return false;
+  });
+
   useEffect(() => {
-    setIsDesktop(window.matchMedia("(min-width: 768px)").matches);
+    if (typeof window === 'undefined') return;
+
+    const media = window.matchMedia("(min-width: 768px)");
+    const listener = (e) => setIsDesktop(e.matches);
+    
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
   }, []);
 
   if (!isDesktop) return null;

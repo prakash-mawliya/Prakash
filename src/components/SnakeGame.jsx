@@ -12,6 +12,67 @@ const DOWN = { x: 0, y: 1 };
 const LEFT = { x: -1, y: 0 };
 const RIGHT = { x: 1, y: 0 };
 
+// --- AI Pathfinding (BFS) ---
+const getAiMove = (currentSnake, currentFood, currentDirection) => {
+  const head = currentSnake[0];
+  const moves = [UP, DOWN, LEFT, RIGHT];
+  
+  // BFS to find shortest path to food
+  const queue = [[head]];
+  const visited = new Set();
+  visited.add(`${head.x},${head.y}`);
+  const parentMap = new Map(); // Key: coordStr, Value: { parentCoord, move }
+
+  let foundPathEnd = null;
+
+  while (queue.length > 0) {
+    const path = queue.shift();
+    const current = path[path.length - 1];
+
+    if (current.x === currentFood.x && current.y === currentFood.y) {
+      foundPathEnd = current;
+      break;
+    }
+
+    for (const move of moves) {
+      const next = { x: current.x + move.x, y: current.y + move.y };
+      const nextStr = `${next.x},${next.y}`;
+
+      if (next.x < 0 || next.x >= GRID_SIZE || next.y < 0 || next.y >= GRID_SIZE) continue;
+      
+      if (currentSnake.some(s => s.x === next.x && s.y === next.y)) continue;
+
+      if (!visited.has(nextStr)) {
+        visited.add(nextStr);
+        queue.push([...path, next]);
+        parentMap.set(nextStr, { from: current, move: move });
+      }
+    }
+  }
+
+  if (foundPathEnd) {
+      let curr = foundPathEnd;
+      let pathStack = [];
+      while(curr.x !== head.x || curr.y !== head.y) {
+          const info = parentMap.get(`${curr.x},${curr.y}`);
+          if(!info) break;
+          pathStack.push(info.move);
+          curr = info.from;
+      }
+      return pathStack.pop();
+  }
+
+  for (const move of moves) {
+      const next = { x: head.x + move.x, y: head.y + move.y };
+      if (next.x >= 0 && next.x < GRID_SIZE && next.y >= 0 && next.y < GRID_SIZE &&
+          !currentSnake.some(s => s.x === next.x && s.y === next.y)) {
+          return move;
+      }
+  }
+
+  return currentDirection;
+};
+
 const SnakeGame = ({ isOpen, onClose }) => {
   const canvasRef = useRef(null);
   const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
@@ -34,7 +95,6 @@ const SnakeGame = ({ isOpen, onClose }) => {
         x: Math.floor(Math.random() * GRID_SIZE),
         y: Math.floor(Math.random() * GRID_SIZE)
       };
-      // eslint-disable-next-line no-loop-func
       isOnSnake = currentSnake.some(segment => segment.x === newFood.x && segment.y === newFood.y);
     }
     return newFood;
@@ -49,71 +109,7 @@ const SnakeGame = ({ isOpen, onClose }) => {
     setIsPlaying(true);
   };
 
-  // --- AI Pathfinding (BFS) ---
-  const getAiMove = (currentSnake, currentFood) => {
-    const head = currentSnake[0];
-    const moves = [UP, DOWN, LEFT, RIGHT];
-    
-    // BFS to find shortest path to food
-    const queue = [[head]];
-    const visited = new Set();
-    visited.add(`${head.x},${head.y}`);
-    const parentMap = new Map(); // Key: coordStr, Value: { parentCoord, move }
 
-    let foundPathEnd = null;
-
-    while (queue.length > 0) {
-      const path = queue.shift();
-      const current = path[path.length - 1];
-
-      if (current.x === currentFood.x && current.y === currentFood.y) {
-        foundPathEnd = current;
-        break;
-      }
-
-      for (const move of moves) {
-        const next = { x: current.x + move.x, y: current.y + move.y };
-        const nextStr = `${next.x},${next.y}`;
-
-        // Check bounds
-        if (next.x < 0 || next.x >= GRID_SIZE || next.y < 0 || next.y >= GRID_SIZE) continue;
-        
-        // Check collision with snake (treat tail as open because it will move, unless just ate)
-        // For simplicity, just avoid whole body
-        if (currentSnake.some(s => s.x === next.x && s.y === next.y)) continue;
-
-        if (!visited.has(nextStr)) {
-          visited.add(nextStr);
-          queue.push([...path, next]);
-          parentMap.set(nextStr, { from: current, move: move });
-        }
-      }
-    }
-
-    if (foundPathEnd) {
-        // Backtrack to find the first move
-        let curr = foundPathEnd;
-        let pathStack = [];
-        while(curr.x !== head.x || curr.y !== head.y) {
-            const info = parentMap.get(`${curr.x},${curr.y}`);
-            if(!info) break;
-            pathStack.push(info.move);
-            curr = info.from;
-        }
-        return pathStack.pop();
-    }
-
-    // Fallback: If no path to food, just try to survive (pick any valid move)
-    for (const move of moves) {
-        const next = { x: head.x + move.x, y: head.y + move.y };
-        if (next.x >= 0 && next.x < GRID_SIZE && next.y >= 0 && next.y < GRID_SIZE &&
-            !currentSnake.some(s => s.x === next.x && s.y === next.y)) {
-            return move;
-        }
-    }
-
-    return direction; // Valid move not found, continue (will die)
-  };
 
 
   // --- Game Loop ---
@@ -124,7 +120,7 @@ const SnakeGame = ({ isOpen, onClose }) => {
       let nextDir = direction;
 
       if (isAiMode) {
-        const aiMove = getAiMove(snake, food);
+        const aiMove = getAiMove(snake, food, direction);
         if (aiMove) nextDir = aiMove;
         setDirection(nextDir);
       }
