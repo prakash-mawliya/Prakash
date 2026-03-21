@@ -438,49 +438,69 @@ const BounceGame = ({ isOpen, onClose }) => {
                  )}
 
                  {/* Mobile Controls Overlay */}
-                 {gameState === 'playing' && (
-                    <div className="touch-controls" style={{
-                        position: 'absolute',
-                        bottom: '20px',
-                        left: '0',
-                        width: '100%',
-                        padding: '0 20px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        pointerEvents: 'none'
-                    }}>
-                        <div style={{ display: 'flex', gap: '20px', pointerEvents: 'auto' }}>
-                            <button 
-                                onTouchStart={(e) => { e.preventDefault(); handleTouchStart('left'); }} 
-                                onTouchEnd={(e) => { e.preventDefault(); handleTouchEnd('left'); }}
-                                onMouseDown={() => handleTouchStart('left')}
-                                onMouseUp={() => handleTouchEnd('left')}
-                                onMouseLeave={() => handleTouchEnd('left')}
-                                style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.5)', color: 'white', fontSize: '24px', backdropFilter: 'blur(5px)' }}
-                            >
-                                ◀
-                            </button>
-                            <button 
-                                onTouchStart={(e) => { e.preventDefault(); handleTouchStart('right'); }} 
-                                onTouchEnd={(e) => { e.preventDefault(); handleTouchEnd('right'); }}
-                                onMouseDown={() => handleTouchStart('right')}
-                                onMouseUp={() => handleTouchEnd('right')}
-                                onMouseLeave={() => handleTouchEnd('right')}
-                                style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.5)', color: 'white', fontSize: '24px', backdropFilter: 'blur(5px)' }}
-                            >
-                                ▶
-                            </button>
-                        </div>
-                        <button 
-                            onTouchStart={(e) => { e.preventDefault(); handleTouchStart('jump'); }} 
-                            onMouseDown={() => handleTouchStart('jump')}
-                            style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(255,82,82,0.4)', border: '2px solid rgba(255,82,82,0.8)', color: 'white', fontSize: '18px', fontWeight: 'bold', backdropFilter: 'blur(5px)', pointerEvents: 'auto' }}
-                        >
-                            JUMP
-                        </button>
-                    </div>
-                 )}
+                 {/* Moved to outside canvas area */}
              </div>
+
+             {/* Mobile Controls (Below Screen) */}
+            <div className="mobile-controls" style={{ 
+                marginTop: '1.5rem', 
+                display: 'flex', 
+                justifyContent: 'center', 
+                gap: '40px',
+                padding: '0 10px',
+                userSelect: 'none'
+            }}>
+                {/* Left/Right */}
+                <div style={{ display: 'flex', gap: '15px' }}>
+                    <button 
+                        onTouchStart={(e) => { e.preventDefault(); handleTouchStart('left'); }} 
+                        onTouchEnd={(e) => { e.preventDefault(); handleTouchEnd('left'); }}
+                        onMouseDown={() => handleTouchStart('left')}
+                        onMouseUp={() => handleTouchEnd('left')}
+                        onMouseLeave={() => handleTouchEnd('left')}
+                        style={{ 
+                            width: '60px', height: '60px', borderRadius: '50%', 
+                            background: '#455A64', color: '#fff', border: 'none', 
+                            fontSize: '24px', boxShadow: '0 4px 0 #263238',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        ◀
+                    </button>
+                    <button 
+                        onTouchStart={(e) => { e.preventDefault(); handleTouchStart('right'); }} 
+                        onTouchEnd={(e) => { e.preventDefault(); handleTouchEnd('right'); }}
+                        onMouseDown={() => handleTouchStart('right')}
+                        onMouseUp={() => handleTouchEnd('right')}
+                        onMouseLeave={() => handleTouchEnd('right')}
+                        style={{ 
+                            width: '60px', height: '60px', borderRadius: '50%', 
+                            background: '#455A64', color: '#fff', border: 'none', 
+                            fontSize: '24px', boxShadow: '0 4px 0 #263238',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        ▶
+                    </button>
+                </div>
+
+                {/* Jump Button */}
+                <button 
+                    onTouchStart={(e) => { e.preventDefault(); handleTouchStart('jump'); }} 
+                    onMouseDown={() => handleTouchStart('jump')}
+                    style={{ 
+                        width: '70px', height: '70px', borderRadius: '50%', 
+                        background: '#FF5252', color: '#fff', border: 'none', 
+                        fontSize: '16px', fontWeight: 'bold', boxShadow: '0 4px 0 #D32F2F',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer'
+                    }}
+                >
+                    JUMP
+                </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
