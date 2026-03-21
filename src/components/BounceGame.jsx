@@ -346,6 +346,23 @@ const BounceGame = ({ isOpen, onClose }) => {
     return () => cancelAnimationFrame(animId);
   }, [gameState, cameraX]); // Dependencies
 
+  const handleTouchStart = (action) => {
+    if (action === 'left') controlsRef.current.left = true;
+    if (action === 'right') controlsRef.current.right = true;
+    if (action === 'jump') {
+        if (ballRef.current.isGrounded) {
+             ballRef.current.vy = JUMP_FORCE;
+             ballRef.current.isGrounded = false;
+             addParticles(ballRef.current.x, ballRef.current.y + ballRef.current.radius, '#FFF');
+        }
+    }
+  };
+
+  const handleTouchEnd = (action) => {
+    if (action === 'left') controlsRef.current.left = false;
+    if (action === 'right') controlsRef.current.right = false;
+  };
+
   // Render UI
   return (
     <AnimatePresence>
@@ -418,6 +435,50 @@ const BounceGame = ({ isOpen, onClose }) => {
                          <p>All Rings Collected: {score}</p>
                          <button className="bounce-btn" onClick={resetGame}>REPLAY</button>
                      </div>
+                 )}
+
+                 {/* Mobile Controls Overlay */}
+                 {gameState === 'playing' && (
+                    <div className="touch-controls" style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        left: '0',
+                        width: '100%',
+                        padding: '0 20px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        pointerEvents: 'none'
+                    }}>
+                        <div style={{ display: 'flex', gap: '20px', pointerEvents: 'auto' }}>
+                            <button 
+                                onTouchStart={(e) => { e.preventDefault(); handleTouchStart('left'); }} 
+                                onTouchEnd={(e) => { e.preventDefault(); handleTouchEnd('left'); }}
+                                onMouseDown={() => handleTouchStart('left')}
+                                onMouseUp={() => handleTouchEnd('left')}
+                                onMouseLeave={() => handleTouchEnd('left')}
+                                style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.5)', color: 'white', fontSize: '24px', backdropFilter: 'blur(5px)' }}
+                            >
+                                ◀
+                            </button>
+                            <button 
+                                onTouchStart={(e) => { e.preventDefault(); handleTouchStart('right'); }} 
+                                onTouchEnd={(e) => { e.preventDefault(); handleTouchEnd('right'); }}
+                                onMouseDown={() => handleTouchStart('right')}
+                                onMouseUp={() => handleTouchEnd('right')}
+                                onMouseLeave={() => handleTouchEnd('right')}
+                                style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', border: '2px solid rgba(255,255,255,0.5)', color: 'white', fontSize: '24px', backdropFilter: 'blur(5px)' }}
+                            >
+                                ▶
+                            </button>
+                        </div>
+                        <button 
+                            onTouchStart={(e) => { e.preventDefault(); handleTouchStart('jump'); }} 
+                            onMouseDown={() => handleTouchStart('jump')}
+                            style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(255,82,82,0.4)', border: '2px solid rgba(255,82,82,0.8)', color: 'white', fontSize: '18px', fontWeight: 'bold', backdropFilter: 'blur(5px)', pointerEvents: 'auto' }}
+                        >
+                            JUMP
+                        </button>
+                    </div>
                  )}
              </div>
           </motion.div>

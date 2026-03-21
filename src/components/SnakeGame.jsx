@@ -305,6 +305,40 @@ const SnakeGame = ({ isOpen, onClose }) => {
               </div>
               
               <div style={{ width: '100%', marginTop: '1.5rem', padding: '0 1rem' }}>
+                {/* Mobile Controls */}
+                <div className="mobile-controls" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', maxWidth: '150px', margin: '0 auto 1.5rem' }}>
+                  <div />
+                  <button 
+                    className="nokia-btn" 
+                    onClick={() => direction !== DOWN && setDirection(UP)}
+                    style={{ background: '#444', color: '#fff', border: 'none', padding: '15px', borderRadius: '50%', boxShadow: '0 4px 0 #222' }}
+                  >
+                    ▲
+                  </button>
+                  <div />
+                  <button 
+                    className="nokia-btn" 
+                    onClick={() => direction !== RIGHT && setDirection(LEFT)}
+                    style={{ background: '#444', color: '#fff', border: 'none', padding: '15px', borderRadius: '50%', boxShadow: '0 4px 0 #222' }}
+                  >
+                    ◀
+                  </button>
+                  <button 
+                    className="nokia-btn" 
+                    onClick={() => direction !== UP && setDirection(DOWN)}
+                    style={{ background: '#444', color: '#fff', border: 'none', padding: '15px', borderRadius: '50%', boxShadow: '0 4px 0 #222' }}
+                  >
+                    ▼
+                  </button>
+                  <button 
+                    className="nokia-btn" 
+                    onClick={() => direction !== LEFT && setDirection(RIGHT)}
+                    style={{ background: '#444', color: '#fff', border: 'none', padding: '15px', borderRadius: '50%', boxShadow: '0 4px 0 #222' }}
+                  >
+                    ▶
+                  </button>
+                </div>
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#9bbc0f', fontFamily: 'monospace' }}>
                     <span>SPEED</span>
                     <span>{speed}ms</span>
