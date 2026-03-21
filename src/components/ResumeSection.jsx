@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 
 const ResumeSection = () => {
   // Placeholder data for resumes
@@ -42,8 +43,8 @@ const ResumeSection = () => {
         };
       case 'code':
         return {
-          color: '#3b82f6',
-          bg: 'rgba(59, 130, 246, 0.1)',
+          color: '#22d3ee',
+          bg: 'rgba(34, 211, 238, 0.1)',
           icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="16 18 22 12 16 6"></polyline>
@@ -73,20 +74,53 @@ const ResumeSection = () => {
     <section id="resumes" className="resume-section" style={styles.section}>
       <div className="section-container" style={styles.container}>
         <div className="section-header" style={{ marginBottom: '3rem', textAlign: 'center' }}>
-          <h2 className="heading">My <span style={{ color: 'var(--primary-color)' }}>Resumes</span></h2>
-          <p className="subtitle" style={{ color: 'var(--text-muted)' }}>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="heading"
+          >
+            My <span style={{ color: 'var(--primary-color)' }}>Resumes</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="subtitle" 
+            style={{ color: 'var(--text-muted)' }}
+          >
             Tailored CVs for different roles. View or download the one that fits your needs.
-          </p>
+          </motion.p>
         </div>
 
-        <div className="resumes-grid" style={styles.grid}>
+        <motion.div 
+          className="resumes-grid" 
+          style={styles.grid}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { 
+              opacity: 1, 
+              transition: { staggerChildren: 0.2 } 
+            }
+          }}
+        >
           {resumes.map((resume) => {
             const { icon, color, bg } = getIconData(resume.type);
             return (
-              <div 
+              <motion.div 
                 key={resume.id} 
                 className="resume-card" 
                 style={styles.card}
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+                }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
               >
                 <div 
                   className="icon-wrapper" 
@@ -119,10 +153,10 @@ const ResumeSection = () => {
                     Download
                   </a>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

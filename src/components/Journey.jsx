@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 
 const Journey = () => {
@@ -28,7 +28,7 @@ const Journey = () => {
       role: 'Bachelor of Technology (CSE)',
       org: 'Gurukula Kangri Vishwavidyalaya, Haridwar',
       date: '2022 – 2026',
-      badge: 'CGPA: 7.8',
+      badge: 'CGPA: 8.27',
       desc: 'Specialized in Data Structures, Algorithms, and Web Technologies. Lead Developer at Programming Club.'
     },
     {
@@ -76,7 +76,13 @@ const Journey = () => {
         </div>
 
         {/* Tab Toggle */}
-        <div className="journey-tabs">
+        <motion.div 
+          className="journey-tabs"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
           <button 
             className={`tab-btn ${activeTab === 'experience' ? 'active' : ''}`}
             onClick={() => setActiveTab('experience')}
@@ -89,24 +95,26 @@ const Journey = () => {
           >
             Education
           </button>
-        </div>
+        </motion.div>
 
         {/* Timeline */}
         <div className="timeline-container">
-          {data.map((item, index) => (
-            <motion.div 
-              className="timeline-item" 
-              key={item.id}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true, margin: "-50px" }}
-            >
-              {/* Marker on the line */}
-              <div className="timeline-marker"></div>
+          <AnimatePresence mode="wait">
+            {data.map((item, index) => (
+              <motion.div 
+                className="timeline-item" 
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true, margin: "-50px" }}
+              >
+                {/* Marker on the line */}
+                <div className="timeline-marker"></div>
 
-              {/* Card Content */}
-              <div className="timeline-card">
+                {/* Card Content */}
+                <div className="timeline-card">
                 <div className="timeline-header">
                   <div>
                     <h3 className="role-title">{item.role}</h3>
@@ -142,6 +150,7 @@ const Journey = () => {
               </div>
             </motion.div>
           ))}
+          </AnimatePresence>
         </div>
 
       </div>

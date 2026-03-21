@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 const Achievements = () => {
   const achievements = [
     {
@@ -60,15 +62,27 @@ const Achievements = () => {
       <div className="achievements-wrapper">
         
         {/* Header */}
-        <div className="achievements-header-container">
+        <motion.div 
+          className="achievements-header-container"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
           <h2 className="heading">Achievements & <span>Awards</span></h2>
           <p className="achievements-subtitle">Recognition across competitions for technical excellence and innovation</p>
-        </div>
+        </motion.div>
 
         <div className="achievements-content-grid">
           
           {/* Left Column: Trophy Visual */}
-          <div className="trophy-container">
+          <motion.div 
+            className="trophy-container"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
             <div className="trophy-ring"></div>
             <div className="trophy-icon-large">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
@@ -81,12 +95,32 @@ const Achievements = () => {
               </svg>
             </div>
             <div className="trophy-glow"></div>
-          </div>
+          </motion.div>
 
           {/* Right Column: List */}
-          <div className="achievements-list">
+          <motion.div 
+            className="achievements-list"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { 
+                opacity: 1, 
+                transition: { staggerChildren: 0.15 } 
+              }
+            }}
+          >
             {achievements.map((item) => (
-              <div key={item.id} className="achievement-card">
+              <motion.div 
+                key={item.id} 
+                className="achievement-card"
+                variants={{
+                  hidden: { opacity: 0, x: 20 },
+                  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
+                }}
+                whileHover={{ scale: 1.02, x: 5 }}
+              >
                 <div className="achievement-icon-box">
                   {item.icon}
                 </div>
@@ -95,9 +129,9 @@ const Achievements = () => {
                   <p>{item.org}</p>
                 </div>
                 <div className="achievement-dot"></div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
         </div>
 

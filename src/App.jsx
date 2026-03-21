@@ -2,12 +2,16 @@ import { useEffect } from 'react';
 import About from './components/About';
 import Achievements from './components/Achievements';
 import Contact from './components/Contact';
+import Cursor from './components/Cursor';
 import Hero from './components/Hero';
+import Hobbies from './components/Hobbies';
 import Journey from './components/Journey';
 import Navbar from './components/Navbar';
 import Projects from './components/Projects';
 import ResumeSection from './components/ResumeSection';
+import ScrollProgress from './components/ScrollProgress';
 import Skills from './components/Skills';
+import Tools from './components/Tools';
 
 function App() {
   
@@ -19,16 +23,14 @@ function App() {
       
       const options = {
         root: null,
-        rootMargin: '-20% 0px -20% 0px', // Increased focus area (middle 60% of screen) for better trigger
+        rootMargin: '-20% 0px -20% 0px', 
         threshold: 0.15
       };
 
       observer = new IntersectionObserver((entries) => {
-        // Dynamic check inside the callback so it works even if you resize/inspect without refresh
         const isMobile = window.innerWidth <= 1024;
         
         entries.forEach((entry) => {
-          // If on desktop, remove the class to be safe and do nothing else
           if (!isMobile) {
             entry.target.classList.remove('mobile-hover');
             return;
@@ -45,6 +47,7 @@ function App() {
       const selectors = [
         '.stat-card-v2',
         '.project-card',
+        '.tool-card',
         '.tech-card',
         '.timeline-item',
         '.timeline-card', 
@@ -57,7 +60,6 @@ function App() {
       elements.forEach((el) => observer.observe(el));
     };
 
-    // Small delay to ensure DOM elements are fully rendered
     const timeout = setTimeout(initObserver, 800);
 
     return () => {
@@ -66,16 +68,19 @@ function App() {
     };
   }, []);
 
-  // Application Main Component
   return (
     <div className="App">
+      <ScrollProgress />
+      <Cursor />
       <Navbar />
       <Hero />
       <About />
       <Skills />
       <Projects />
+      <Tools />
       <Journey />
       <Achievements />
+      <Hobbies />
       <ResumeSection />
       <Contact />
       
@@ -86,9 +91,10 @@ function App() {
         justifyContent: 'center', 
         alignItems: 'center',
         background: 'var(--bg-color)',
-        color: 'var(--text-muted)'
+        color: 'var(--text-muted)',
+        fontSize: '0.9rem'
       }}>
-        <p>Copyright &copy; 2026 by Prakash | Built with React</p>
+        <p>© 2026 Prakash. All rights reserved.</p>
       </footer>
     </div>
   );

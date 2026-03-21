@@ -13,9 +13,11 @@ const ThemeToggle = () => {
     const html = document.documentElement;
     if (isDarkMode) {
       html.classList.add('dark');
+      html.classList.remove('light');
       localStorage.setItem('theme', 'dark');
     } else {
       html.classList.remove('dark');
+      html.classList.add('light');
       localStorage.setItem('theme', 'light');
     }
   }, [isDarkMode]);

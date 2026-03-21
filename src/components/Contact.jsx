@@ -15,7 +15,7 @@ const Contact = () => {
             viewport={{ once: true }}
             className="heading"
           >
-            Let's <span style={{ color: '#2563EB' }}>Connect</span>
+            Let's <span style={{ color: '#22d3ee' }}>Connect</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0 }}
@@ -33,8 +33,8 @@ const Contact = () => {
           {/* Left Column: Info */}
           <motion.div 
             className="contact-info-card"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
@@ -101,9 +101,9 @@ const Contact = () => {
           {/* Right Column: WhatsApp Call to Action */}
           <motion.div 
             className="contact-form-card" 
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
             style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', minHeight: '300px' }}
           >

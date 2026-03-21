@@ -10,8 +10,10 @@ const Navbar = () => {
     { name: 'About', href: '#hero' }, // Mapping 'About' to Hero/Home for now or actual About if it exists
     { name: 'Tech Stack', href: '#skills' },
     { name: 'Projects', href: '#projects' },
+    { name: 'Tools', href: '#tools' },
     { name: 'Experience', href: '#journey' },
     { name: 'Achievements', href: '#achievements' },
+    { name: 'Hobbies', href: '#hobbies' },
     { name: 'Resumes', href: '#resumes' },
     { name: 'Contact', href: '#contact' },
   ];

@@ -1,5 +1,5 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 const Skills = () => {
   const [activeTab, setActiveTab] = useState('All');
@@ -107,7 +107,13 @@ const Skills = () => {
         </motion.p>
       </div>
 
-      <div className="tech-tabs">
+      <motion.div 
+        className="tech-tabs"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        viewport={{ once: true }}
+      >
         {categories.map(cat => (
           <button 
             key={cat} 
@@ -117,28 +123,55 @@ const Skills = () => {
             {cat}
           </button>
         ))}
-      </div>
+      </motion.div>
 
-      <div className="tech-grid">
-        {filteredSkills.map((skill) => (
-          <div className="tech-card" key={skill.id}>
-            <div className="tech-card-header">
-              <div className="tech-icon-box">
-                {skill.icon}
+      <motion.div 
+        className="tech-grid"
+        layout
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { 
+            opacity: 1, 
+            transition: { staggerChildren: 0.1 } 
+          }
+        }}
+      >
+        <AnimatePresence mode="popLayout">
+          {filteredSkills.map((skill) => (
+            <motion.div 
+              className="tech-card" 
+              key={skill.id}
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              whileHover={{ 
+                y: -5,
+                transition: { duration: 0.2 } 
+              }}
+            >
+              <div className="tech-card-header">
+                <div className="tech-icon-box">
+                  {skill.icon}
+                </div>
+                <span className={`tech-badge ${skill.level.toLowerCase()}`}>{skill.level}</span>
               </div>
-              <span className={`tech-badge ${skill.level.toLowerCase()}`}>{skill.level}</span>
-            </div>
-            
-            <h3>{skill.title}</h3>
-            
-            <ul className="tech-list">
-              {skill.items.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+              
+              <h3>{skill.title}</h3>
+              
+              <ul className="tech-list">
+                {skill.items.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
     </section>
   );
 };

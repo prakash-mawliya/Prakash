@@ -163,9 +163,28 @@ const About = () => {
              <h3>Quick <span className="highlight-cyan">Facts</span></h3>
           </div>
           
-          <div className="quick-facts-list">
+          <motion.div 
+            className="quick-facts-list"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { 
+                opacity: 1, 
+                transition: { staggerChildren: 0.1 } 
+              }
+            }}
+          >
             {quickFacts.map((fact) => (
-              <div className="fact-item" key={fact.id}>
+              <motion.div 
+                className="fact-item" 
+                key={fact.id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+                }}
+              >
                 <div className="fact-icon-wrapper">
                   {fact.icon}
                 </div>
@@ -173,9 +192,9 @@ const About = () => {
                   <span className="fact-label">{fact.text}</span>
                   <span className="fact-value">{fact.value}</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
         </div>
 
