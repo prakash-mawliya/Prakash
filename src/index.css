@@ -6170,3 +6170,139 @@ html.dark .theme-toggle-btn:hover {
     transform: translateX(5px);
 }
 
+
+
+/* =========================================
+   MOBILE RESPONSIVENESS OVERRIDES 
+   ========================================= */
+
+@media (max-width: 768px) {
+  /* Global Typography */
+  html {
+    font-size: 14px;
+  }
+  
+  h1, .hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  h2, .section-title, .heading {
+    font-size: 2rem !important;
+  }
+  
+  .hero-description {
+    font-size: 1rem !important;
+  }
+
+  /* Global Layout */
+  section {
+    padding: 3rem 1rem !important;
+  }
+  
+  .container, .about-container, .projects-container, .journey-container, .hero-container {
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Navbar */
+  .navbar-content {
+    padding: 0 1rem;
+  }
+  
+  .mobile-menu {
+    padding-top: 4rem; /* Lower it slightly */
+    background: var(--nav-bg);
+  }
+  
+  /* Hero Section */
+  .hero-container {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 2rem;
+    padding-top: 4rem !important;
+  }
+  
+  .hero-content {
+    align-items: center;
+  }
+  
+  .hero-image-container {
+    width: 250px;
+    height: 250px;
+    margin: 0 auto;
+  }
+  
+  .hero-actions {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .hero-socials {
+    justify-content: center;
+  }
+  
+  /* Grids -> Single Column */
+  .stats-grid-v2, 
+  .projects-grid, 
+  .hobbies-grid,
+  .tech-grid,
+  .achievements-grid,
+  .skills-grid,
+  .tools-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+  
+  .quick-facts-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Specific Component Adjustments */
+  .about-bio {
+    padding: 0 1rem;
+  }
+  
+  .project-card, .hobby-card, .tool-card {
+    max-width: 100%;
+  }
+  
+  /* Contact Form */
+  .contact-container {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .contact-form-card, .contact-info-card {
+    padding: 1.5rem;
+  }
+  
+  /* Games/Canvas */
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+  
+  .game-container {
+    width: 100% !important;
+    height: 300px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem !important;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
