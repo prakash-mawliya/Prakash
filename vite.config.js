@@ -4,5 +4,6 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/Prakash/",
+  // GitHub Pages needs base path, Vercel needs root '/'
+  base: process.env.GITHUB_ACTIONS ? "/Prakash/" : "/",
 })
