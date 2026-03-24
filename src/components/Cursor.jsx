@@ -107,7 +107,7 @@ const Cursor = () => {
           left: 0,
           borderRadius: '50%',
           pointerEvents: 'none',
-          zIndex: 9999
+          zIndex: 10001
         }}
       />
       <motion.div
@@ -121,7 +121,7 @@ const Cursor = () => {
             left: 0,
             borderRadius: '50%',
             pointerEvents: 'none',
-            zIndex: 9998
+            zIndex: 10000
         }}
       />
     </>

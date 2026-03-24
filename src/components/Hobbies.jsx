@@ -86,8 +86,8 @@ const Hobbies = () => {
             {/* Content Overlay */}
             <div className="hobby-content" style={{ position: 'relative', zIndex: 2 }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{hobby.icon}</div>
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#fff', fontWeight: 'bold' }}>{hobby.title}</h3>
-              <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.9)', lineHeight: '1.6', marginBottom: hobby.link ? '1rem' : '0' }}>{hobby.desc}</p>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: 'var(--text-main)', fontWeight: 'bold' }}>{hobby.title}</h3>
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: hobby.link ? '1rem' : '0' }}>{hobby.desc}</p>
               
               {hobby.link ? (
                   <a 
@@ -101,7 +101,7 @@ const Hobbies = () => {
               ) : (
                 <span 
                     className="check-work-btn"
-                    style={{ opacity: 0.6, cursor: 'not-allowed', background: 'rgba(0,0,0,0.3)', borderColor: 'transparent' }}
+                  style={{ opacity: 0.6, cursor: 'not-allowed', background: 'var(--input-bg)', borderColor: 'var(--border)', color: 'var(--text-muted)' }}
                 >
                     Coming Soon...
                 </span>

@@ -3,6 +3,7 @@ import About from './components/About';
 import Achievements from './components/Achievements';
 import Contact from './components/Contact';
 import Cursor from './components/Cursor';
+import FunZone from './components/FunZone';
 import Hero from './components/Hero';
 import Hobbies from './components/Hobbies';
 import Journey from './components/Journey';
@@ -11,7 +12,6 @@ import Projects from './components/Projects';
 import ResumeSection from './components/ResumeSection';
 import ScrollProgress from './components/ScrollProgress';
 import Skills from './components/Skills';
-import Tools from './components/Tools';
 
 function App() {
   
@@ -77,9 +77,9 @@ function App() {
       <About />
       <Skills />
       <Projects />
-      <Tools />
       <Journey />
       <Achievements />
+      <FunZone />
       <Hobbies />
       <ResumeSection />
       <Contact />

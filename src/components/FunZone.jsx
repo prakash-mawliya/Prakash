@@ -1,14 +1,20 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import BounceGame from './BounceGame';
+import CricketGame from './CricketGame';
 import EMICalculator from './EMICalculator';
 import ImageConverter from './ImageConverter';
 import QRCodeGenerator from './QRCodeGenerator';
+import RetroPlatformerGame from './RetroPlatformerGame';
 import SIPCalculator from './SIPCalculator';
 import SnakeGame from './SnakeGame';
 
-const Tools = () => {
+const FunZone = () => {
   const [activeTool, setActiveTool] = useState(null);
+
+  const openTool = (toolKey) => {
+    setActiveTool(toolKey);
+  };
 
   const tools = [
     {
@@ -16,47 +22,61 @@ const Tools = () => {
       title: "Image Converter",
       icon: "🖼️",
       desc: "Convert WebP to JPG, JPG to WebP, and more instantly.",
-      action: () => setActiveTool('image')
+      action: () => openTool('image')
     },
     {
       id: 2,
       title: "EMI Converter",
       icon: "💰",
       desc: "Calculate Equated Monthly Installments quickly and accurately.",
-      action: () => setActiveTool('emi')
+      action: () => openTool('emi')
     },
     {
       id: 3,
       title: "SIP Calculator",
       icon: "📈",
       desc: "Project returns on your Systematic Investment Plans with precision.",
-      action: () => setActiveTool('sip')
+      action: () => openTool('sip')
     },
     {
       id: 4,
-      title: "QR Code Generator",
-      icon: "🔗",
-      desc: "Generate custom QR codes for links, text, and more.",
-      action: () => setActiveTool('qr')
+      title: "Quantum QR Forge",
+      icon: "🧬",
+      desc: "Generate futuristic QR codes with custom colors and high-tech styling.",
+      action: () => openTool('qr')
     },
     {
       id: 5,
       title: "Snake AI Game",
       icon: "🐍",
       desc: "Watch an AI solve the classic snake game using BFS.",
-      action: () => setActiveTool('snake')
+      action: () => openTool('snake')
     },
     {
       id: 6,
       title: "Bounce Classic",
       icon: "🔴",
       desc: "Play the nostalgic Nokia Bounce ball game.",
-      action: () => setActiveTool('bounce')
+      action: () => openTool('bounce')
+    },
+    {
+      id: 7,
+      title: "Nokia Cricket Remastered",
+      icon: "🏏",
+      desc: "Play Classic Nokia or Modern Pro modes with dynamic physics!",
+      action: () => openTool('cricket')
+    },
+    {
+      id: 8,
+      title: "Retro Platformer X",
+      icon: "🕹️",
+      desc: "Run, jump, collect coins, dodge enemies in Classic & Modern modes.",
+      action: () => openTool('platformer')
     }
   ];
 
   return (
-    <section className="tools-section" id="tools">
+    <section className="tools-section" id="funzone">
       <div className="section-header">
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
@@ -65,9 +85,9 @@ const Tools = () => {
           viewport={{ once: true }}
           className="heading"
         >
-          Creative <span>Tools</span>
+          Fun <span>Zone</span>
         </motion.h2>
-        <p className="subheading" style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '2rem' }}>Utility apps built to simplify your workflow.</p>
+        <p className="subheading" style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '2rem' }}>Fun games and utilities built for you to enjoy.</p>
       </div>
 
       <div className="tools-grid">
@@ -80,6 +100,15 @@ const Tools = () => {
             transition={{ delay: index * 0.1, duration: 0.5 }}
             whileHover={{ y: -5 }}
             viewport={{ once: true }}
+            onClick={tool.action ? tool.action : undefined}
+            onKeyDown={tool.action ? (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                tool.action();
+              }
+            } : undefined}
+            role={tool.action ? 'button' : undefined}
+            tabIndex={tool.action ? 0 : undefined}
+            style={{ cursor: tool.action ? 'pointer' : 'default' }}
           >
             <div className="tool-icon-wrapper" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
               <span className="tool-icon">{tool.icon}</span>
@@ -89,9 +118,13 @@ const Tools = () => {
             
             {tool.action ? (
               <button 
-                onClick={tool.action} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  tool.action();
+                }}
                 className="tool-btn"
                 style={{ cursor: 'pointer', border: 'none', background: 'transparent', color: 'var(--primary)', fontWeight: 'bold', fontSize: '1rem', padding: '0.5rem 0' }}
+                type="button"
               >
                 Try Now &rarr;
               </button>
@@ -143,8 +176,18 @@ const Tools = () => {
         isOpen={activeTool === 'bounce'}
         onClose={() => setActiveTool(null)}
       />
+
+      <CricketGame
+        isOpen={activeTool === 'cricket'}
+        onClose={() => setActiveTool(null)}
+      />
+
+      <RetroPlatformerGame
+        isOpen={activeTool === 'platformer'}
+        onClose={() => setActiveTool(null)}
+      />
     </section>
   );
 };
 
-export default Tools;
+export default FunZone;

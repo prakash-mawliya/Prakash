@@ -1,9 +1,13 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  // GitHub Pages needs base path, Vercel needs root '/'
-  base: process.env.GITHUB_ACTIONS ? "/Prakash/" : "/",
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, '.', '')
+  const isGithubActions = Boolean(env.GITHUB_ACTIONS)
+
+  return {
+    plugins: [react()],
+    base: isGithubActions ? '/Prakash/' : '/',
+  }
 })
