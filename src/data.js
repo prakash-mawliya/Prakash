@@ -44,12 +44,12 @@ export const userData = {
     },
     {
       id: 2,
-      title: "FoodZilla",
-      desc: "Multi-role food delivery ecosystem featuring granular RBAC (Role-Based Access Control) for Admins, Vendors, and Customers. Includes advanced order processing, inventory management, and secure JWT authentication.",
-      tech: ["React.js", "Node.js", "Express.js", "MongoDB", "JWT"],
-      github: "https://github.com/prakash-mawliya/FoodZilla",
-      demo: "https://github.com/prakash-mawliya/FoodZilla",
-      imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop"
+      title: "Digital Nangle",
+      desc: "Progressive Web App (PWA) for rural connectivity. Features real-time community feeds via WebSockets, offline-first architecture, and a modern glassmorphism UI.",
+      tech: ["Flask", "MongoDB", "Socket.IO", "PWA", "JavaScript"],
+      github: "https://github.com/prakash-mawliya/nangal1",
+      demo: "https://nangal.vercel.app",
+      imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&auto=format&fit=crop"
     },
     {
       id: 3,
@@ -89,12 +89,12 @@ export const userData = {
     },
     {
       id: 7,
-      title: "Digital Nangle",
-      desc: "Progressive Web App (PWA) for rural connectivity. Features real-time community feeds via WebSockets, offline-first architecture, and a modern glassmorphism UI.",
-      tech: ["Flask", "MongoDB", "Socket.IO", "PWA", "JavaScript"],
-      github: "https://github.com/prakash-mawliya/Nangle-New",
-      demo: "https://github.com/prakash-mawliya/Nangle-New",
-      imageUrl: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&auto=format&fit=crop"
+      title: "FoodZilla",
+      desc: "Multi-role food delivery ecosystem featuring granular RBAC (Role-Based Access Control) for Admins, Vendors, and Customers. Includes advanced order processing, inventory management, and secure JWT authentication.",
+      tech: ["React.js", "Node.js", "Express.js", "MongoDB", "JWT"],
+      github: "https://github.com/prakash-mawliya/FoodZilla",
+      demo: "https://github.com/prakash-mawliya/FoodZilla",
+      imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=600&auto=format&fit=crop"
     }
   ]
 };
