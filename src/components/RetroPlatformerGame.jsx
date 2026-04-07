@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 const CANVAS_WIDTH = 900;
 const CANVAS_HEIGHT = 500;
-const WORLD_WIDTH = 3600;
+const WORLD_WIDTH = 5200;
 const PLAYER_SIZE = 28;
 const BASE_GRAVITY = 0.55;
 const JUMP_VELOCITY = -12.5;
@@ -22,6 +22,12 @@ const buildPlatforms = () => [
   { x: 2810, y: 370, w: 220, h: 20 },
   { x: 3110, y: 305, w: 190, h: 20 },
   { x: 3360, y: 440, w: 260, h: 60 },
+  { x: 3660, y: 390, w: 240, h: 20 },
+  { x: 3970, y: 330, w: 220, h: 20 },
+  { x: 4260, y: 280, w: 200, h: 20 },
+  { x: 4520, y: 350, w: 250, h: 20 },
+  { x: 4830, y: 420, w: 190, h: 20 },
+  { x: 5020, y: 440, w: 200, h: 60 },
 ];
 
 const buildCoins = () => [
@@ -37,6 +43,11 @@ const buildCoins = () => [
   { x: 2890, y: 320, collected: false },
   { x: 3170, y: 255, collected: false },
   { x: 3430, y: 395, collected: false },
+  { x: 3740, y: 340, collected: false },
+  { x: 4060, y: 280, collected: false },
+  { x: 4340, y: 230, collected: false },
+  { x: 4640, y: 300, collected: false },
+  { x: 4920, y: 370, collected: false },
 ];
 
 const buildEnemies = () => [
@@ -44,6 +55,8 @@ const buildEnemies = () => [
   { x: 1540, y: 352, w: 30, h: 28, dir: -1, minX: 1360, maxX: 1575, speed: 1.35 },
   { x: 2350, y: 332, w: 30, h: 28, dir: 1, minX: 2180, maxX: 2370, speed: 1.45 },
   { x: 2990, y: 342, w: 30, h: 28, dir: -1, minX: 2830, maxX: 3000, speed: 1.5 },
+  { x: 3860, y: 362, w: 30, h: 28, dir: 1, minX: 3690, maxX: 3870, speed: 1.58 },
+  { x: 4580, y: 322, w: 30, h: 28, dir: -1, minX: 4540, maxX: 4730, speed: 1.65 },
 ];
 
 const buildObstacles = () => [
@@ -51,6 +64,8 @@ const buildObstacles = () => [
   { x: 2060, y: 430, w: 42, h: 10 },
   { x: 2720, y: 420, w: 36, h: 10 },
   { x: 3260, y: 430, w: 44, h: 10 },
+  { x: 4180, y: 430, w: 42, h: 10 },
+  { x: 4860, y: 420, w: 42, h: 10 },
 ];
 
 const RetroPlatformerGame = ({ isOpen, onClose }) => {
@@ -64,6 +79,44 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
   const [score, setScore] = useState(0);
   const [coins, setCoins] = useState(0);
   const [lives, setLives] = useState(3);
+  const [level, setLevel] = useState(3);
+  const [isMobile, setIsMobile] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const [viewportHeight, setViewportHeight] = useState(typeof window !== 'undefined' ? window.innerHeight : 768);
+  const [showModeMenu, setShowModeMenu] = useState(false);
+  const [showLevelMenu, setShowLevelMenu] = useState(false);
+  const modeMenuRef = useRef(null);
+  const levelMenuRef = useRef(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        setViewportWidth(width);
+        setViewportHeight(height);
+        setIsMobile(width <= 768 || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!showModeMenu && !showLevelMenu) return undefined;
+
+    const closeOnOutsideClick = (event) => {
+      const clickedInsideModeMenu = modeMenuRef.current?.contains(event.target);
+      const clickedInsideLevelMenu = levelMenuRef.current?.contains(event.target);
+
+      if (!clickedInsideModeMenu && !clickedInsideLevelMenu) {
+        setShowModeMenu(false);
+        setShowLevelMenu(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    return () => document.removeEventListener('pointerdown', closeOnOutsideClick);
+  }, [showLevelMenu, showModeMenu]);
 
   const gameRef = useRef({
     cameraX: 0,
@@ -151,6 +204,8 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
     setScore(0);
     setCoins(0);
     setLives(3);
+    setShowModeMenu(false);
+    setShowLevelMenu(false);
     setStatus('playing');
   };
 
@@ -223,6 +278,7 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
       const context = canvas.getContext('2d');
       const game = gameRef.current;
       const nowTime = performance.now();
+      const enemyLevelMultiplier = level === 1 ? 0.6 : level === 2 ? 0.8 : 1;
 
       game.time += 1;
       game.difficultyScale = 1 + Math.min(game.time / 9000, 1.3);
@@ -274,7 +330,7 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
       }
 
       for (const enemy of game.enemies) {
-        const enemySpeed = enemy.speed * game.difficultyScale;
+        const enemySpeed = enemy.speed * game.difficultyScale * enemyLevelMultiplier;
         enemy.x += enemy.dir * enemySpeed;
         if (enemy.x <= enemy.minX || enemy.x >= enemy.maxX) enemy.dir *= -1;
 
@@ -352,13 +408,35 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
       context.translate(-game.cameraX, 0);
 
       for (const platform of game.platforms) {
+        // Platform shadow
+        context.fillStyle = 'rgba(0,0,0,0.2)';
+        context.fillRect(platform.x, platform.y + platform.h, platform.w, 3);
+        
+        // Platform top
         context.fillStyle = theme.platformTop;
         context.fillRect(platform.x, platform.y, platform.w, 6);
+        
+        // Platform side
         context.fillStyle = theme.platformSide;
         context.fillRect(platform.x, platform.y + 6, platform.w, platform.h - 6);
+        
+        // Platform edge highlight
+        context.strokeStyle = 'rgba(255,255,255,0.1)';
+        context.lineWidth = 1;
+        context.strokeRect(platform.x, platform.y, platform.w, 6);
       }
 
       for (const obstacle of game.obstacles) {
+        // Obstacle shadow
+        context.fillStyle = 'rgba(0,0,0,0.25)';
+        context.beginPath();
+        context.moveTo(obstacle.x, obstacle.y + obstacle.h + 2);
+        context.lineTo(obstacle.x + obstacle.w / 2, obstacle.y + 2);
+        context.lineTo(obstacle.x + obstacle.w, obstacle.y + obstacle.h + 2);
+        context.closePath();
+        context.fill();
+        
+        // Obstacle spike
         context.fillStyle = theme.obstacle;
         context.beginPath();
         context.moveTo(obstacle.x, obstacle.y + obstacle.h);
@@ -366,35 +444,111 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
         context.lineTo(obstacle.x + obstacle.w, obstacle.y + obstacle.h);
         context.closePath();
         context.fill();
+        
+        // Spike highlight
+        context.strokeStyle = 'rgba(255,255,255,0.15)';
+        context.lineWidth = 1;
+        context.stroke();
       }
 
       for (const coin of game.coins) {
         if (coin.collected) continue;
         const pulse = 1 + Math.sin((game.time + coin.x) * 0.06) * 0.1;
+        
+        // Coin shadow
+        context.fillStyle = 'rgba(0,0,0,0.2)';
+        context.beginPath();
+        context.arc(coin.x, coin.y + 3, 10 * pulse * 0.7, 0, Math.PI * 2);
+        context.fill();
+        
+        // Coin glow
+        context.strokeStyle = mode === 'classic' ? 'rgba(255,255,255,0.3)' : 'rgba(245,158,11,0.4)';
+        context.lineWidth = 2;
+        context.beginPath();
+        context.arc(coin.x, coin.y, 10 * pulse + 2, 0, Math.PI * 2);
+        context.stroke();
+        
+        // Coin
         context.beginPath();
         context.fillStyle = theme.coin;
         context.arc(coin.x, coin.y, 10 * pulse, 0, Math.PI * 2);
         context.fill();
+        
+        // Coin shine
+        context.fillStyle = 'rgba(255,255,255,0.4)';
+        context.beginPath();
+        context.arc(coin.x - 3, coin.y - 3, 3, 0, Math.PI * 2);
+        context.fill();
+        
+        // Coin slot
         context.fillStyle = mode === 'classic' ? '#0a0a0a' : '#78350f';
         context.fillRect(coin.x - 2, coin.y - 7, 4, 14);
       }
 
       for (const enemy of game.enemies) {
+        // Enemy shadow
+        context.fillStyle = 'rgba(0,0,0,0.25)';
+        context.fillRect(enemy.x, enemy.y + enemy.h + 1, enemy.w, 2);
+        
+        // Enemy body
         context.fillStyle = theme.enemy;
         context.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
+        
+        // Enemy body shine/edge
+        context.strokeStyle = 'rgba(255,255,255,0.1)';
+        context.lineWidth = 1;
+        context.strokeRect(enemy.x, enemy.y, enemy.w, enemy.h);
+        
+        // Enemy eyes
         context.fillStyle = mode === 'classic' ? '#d4d4d4' : '#fef2f2';
         context.fillRect(enemy.x + 6, enemy.y + 8, 6, 6);
         context.fillRect(enemy.x + 18, enemy.y + 8, 6, 6);
+        
+        // Eye pupils
+        context.fillStyle = mode === 'classic' ? '#1f1f1f' : '#1e1b4b';
+        const pupilShift = enemy.dir > 0 ? 2 : -2;
+        context.beginPath();
+        context.arc(enemy.x + 9 + pupilShift, enemy.y + 11, 1.5, 0, Math.PI * 2);
+        context.fill();
+        context.beginPath();
+        context.arc(enemy.x + 21 + pupilShift, enemy.y + 11, 1.5, 0, Math.PI * 2);
+        context.fill();
       }
 
       context.globalAlpha = nowTime < player.invulnerableUntil ? 0.4 + Math.abs(Math.sin(game.time * 0.2)) * 0.6 : 1;
+      
+      // Player shadow
+      context.fillStyle = 'rgba(0,0,0,0.2)';
+      context.fillRect(player.x, player.y + PLAYER_SIZE + 1, PLAYER_SIZE, 2);
+      
+      // Player body
       context.fillStyle = theme.player;
       context.fillRect(player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+      
+      // Player edge highlight
+      context.strokeStyle = 'rgba(255,255,255,0.15)';
+      context.lineWidth = 1.5;
+      context.strokeRect(player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+      
+      // Player eyes (white part)
       context.fillStyle = mode === 'classic' ? '#eaeaea' : '#c7d2fe';
       context.fillRect(player.x + 6, player.y + 6, 6, 6);
       context.fillRect(player.x + 16, player.y + 6, 6, 6);
+      
+      // Player eyes (pupils)
+      context.fillStyle = mode === 'classic' ? '#1f1f1f' : '#1e1b4b';
+      const playerPupilShift = player.vx > 0 ? 2 : (player.vx < 0 ? -2 : 0);
+      context.beginPath();
+      context.arc(player.x + 9 + playerPupilShift, player.y + 9, 1.8, 0, Math.PI * 2);
+      context.fill();
+      context.beginPath();
+      context.arc(player.x + 19 + playerPupilShift, player.y + 9, 1.8, 0, Math.PI * 2);
+      context.fill();
+      
+      // Player mouth
       context.fillStyle = mode === 'classic' ? '#1f1f1f' : '#1e1b4b';
       context.fillRect(player.x + 9, player.y + 18, 10, 3);
+      
       context.globalAlpha = 1;
 
       context.restore();
@@ -407,12 +561,38 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
-  }, [isOpen, status, mode, theme]);
+  }, [isOpen, level, status, mode, theme]);
 
   const handleOverlayClose = () => {
     if (Date.now() - openedAtRef.current < 500) return;
     onClose();
   };
+
+  const isTablet = viewportWidth <= 1024;
+  const isSmallMobile = viewportWidth <= 480;
+  const isTinyMobile = viewportWidth <= 380;
+  const isVeryShortViewport = viewportHeight <= 560;
+  const isShortViewport = viewportHeight <= 720;
+  const isLandscapeMobile = isMobile && viewportWidth > viewportHeight;
+  const compactHeader = isSmallMobile || isLandscapeMobile;
+  const headerPadding = compactHeader ? '0.85rem 1rem' : '1.5rem';
+  const contentPadding = isSmallMobile ? '0.55rem' : isLandscapeMobile ? '0.7rem 0.85rem 0.85rem' : '1rem 1.2rem 1.2rem';
+  const modeFontSize = isTinyMobile ? '0.72rem' : isSmallMobile ? '0.78rem' : '0.9rem';
+  const modePadding = isTinyMobile ? '0.27rem 0.5rem' : isSmallMobile ? '0.32rem 0.6rem' : '0.4rem 0.75rem';
+  const overlayInset = isSmallMobile ? '0.45rem' : '0.62rem';
+  const controlBtnSize = isLandscapeMobile ? 46 : isTinyMobile ? 52 : isSmallMobile ? 58 : 65;
+  const jumpBtnSize = isLandscapeMobile ? 54 : isTinyMobile ? 62 : isSmallMobile ? 68 : 75;
+  const hudTop = isSmallMobile ? '0.55rem' : '0.7rem';
+  const hudSide = isSmallMobile ? '0.52rem' : '0.72rem';
+  const hudBadgePadding = isTinyMobile ? '0.22rem 0.45rem' : isSmallMobile ? '0.24rem 0.5rem' : '0.3rem 0.58rem';
+  const hudBadgeFont = isTinyMobile ? '0.72rem' : isSmallMobile ? '0.78rem' : '0.86rem';
+  const modeToggleTop = isSmallMobile ? '0.55rem' : '0.7rem';
+  const levelToggleTop = isLandscapeMobile ? '0.55rem' : isSmallMobile ? '2.55rem' : '3.05rem';
+  const levelToggleRight = isLandscapeMobile ? (isSmallMobile ? '5.35rem' : '5.75rem') : hudSide;
+  const menuMinWidth = isTinyMobile ? '108px' : isSmallMobile ? '120px' : '140px';
+  const gameMinHeight = isLandscapeMobile ? '38vh' : isVeryShortViewport ? '40vh' : isSmallMobile ? '44vh' : isMobile ? '50vh' : '60vh';
+  const canvasMinHeight = isLandscapeMobile ? '34vh' : isVeryShortViewport ? '36vh' : isShortViewport ? '42vh' : isSmallMobile ? '44vh' : isMobile ? '50vh' : '60vh';
+  const canvasMaxHeight = isLandscapeMobile ? '54vh' : isVeryShortViewport ? '58vh' : isSmallMobile ? '66vh' : isMobile ? '76vh' : '84vh';
 
   return (
     <AnimatePresence>
@@ -430,102 +610,284 @@ const RetroPlatformerGame = ({ isOpen, onClose }) => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.92, opacity: 0, y: 24 }}
             onClick={(event) => event.stopPropagation()}
-            style={{ maxWidth: '980px', background: '#020617', border: '1px solid #1e293b' }}
+            style={{
+              width: '100%',
+              maxWidth: isTablet ? '99vw' : '980px',
+              maxHeight: isMobile ? '100dvh' : '92vh',
+              overflowY: 'auto',
+              background: '#020617',
+              border: '1px solid #1e293b',
+            }}
           >
-            <div className="modal-header" style={{ background: 'transparent', borderBottom: '1px solid #1e293b' }}>
-              <h3 style={{ color: '#e2e8f0' }}>Retro Platformer X</h3>
+            <div className="modal-header" style={{ background: 'transparent', borderBottom: '1px solid #1e293b', padding: headerPadding }}>
+              <h3 style={{ color: '#e2e8f0', fontSize: compactHeader ? '1.08rem' : '1.5rem' }}>Retro Platformer X</h3>
               <button className="close-btn" onClick={onClose}>&times;</button>
             </div>
 
-            <div className="calculator-content" style={{ padding: '1rem 1.2rem 1.2rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
-                <div style={{ display: 'flex', gap: '0.7rem', flexWrap: 'wrap', color: '#e2e8f0' }}>
-                  <span style={{ background: '#111827', padding: '0.35rem 0.7rem', borderRadius: '0.5rem', border: '1px solid #334155' }}>Score: {score}</span>
-                  <span style={{ background: '#111827', padding: '0.35rem 0.7rem', borderRadius: '0.5rem', border: '1px solid #334155' }}>Coins: {coins}</span>
-                  <span style={{ background: '#111827', padding: '0.35rem 0.7rem', borderRadius: '0.5rem', border: '1px solid #334155' }}>Lives: {lives}</span>
+            <div className="calculator-content" style={{ padding: contentPadding }}>
+              <div style={{ width: '100%', overflow: 'hidden', borderRadius: isSmallMobile ? '0.6rem' : '0.75rem', border: '1px solid #334155', background: '#000', boxShadow: '0 8px 30px rgba(0,0,0,0.5)', position: 'relative', minHeight: gameMinHeight }}>
+                <div style={{ position: 'absolute', top: hudTop, left: hudSide, zIndex: 8, display: 'flex', gap: '0.38rem', flexWrap: 'wrap', maxWidth: '64%' }}>
+                  <span style={{ background: 'rgba(15,23,42,0.88)', color: '#e2e8f0', padding: hudBadgePadding, borderRadius: '0.45rem', border: '1px solid #334155', fontWeight: 600, fontSize: hudBadgeFont }}>Score: {score}</span>
+                  <span style={{ background: 'rgba(15,23,42,0.88)', color: '#e2e8f0', padding: hudBadgePadding, borderRadius: '0.45rem', border: '1px solid #334155', fontWeight: 600, fontSize: hudBadgeFont }}>Coins: {coins}</span>
+                  <span style={{ background: 'rgba(15,23,42,0.88)', color: '#e2e8f0', padding: hudBadgePadding, borderRadius: '0.45rem', border: '1px solid #334155', fontWeight: 600, fontSize: hudBadgeFont }}>Lives: {lives}</span>
                 </div>
 
-                <div style={{ display: 'flex', gap: '0.45rem' }}>
+                <div ref={modeMenuRef} style={{ position: 'absolute', top: modeToggleTop, right: hudSide, zIndex: 9 }}>
                   <button
                     type="button"
-                    onClick={() => setMode('classic')}
+                    onClick={() => {
+                      setShowModeMenu((prev) => !prev);
+                      setShowLevelMenu(false);
+                    }}
+                    aria-label="Open mode menu"
                     style={{
-                      padding: '0.4rem 0.75rem',
-                      borderRadius: '0.5rem',
-                      border: mode === 'classic' ? '1px solid #fafafa' : '1px solid #334155',
-                      background: mode === 'classic' ? '#1f2937' : '#0f172a',
+                      padding: modePadding,
+                      borderRadius: '0.45rem',
+                      border: '1px solid #334155',
+                      background: 'rgba(15,23,42,0.92)',
                       color: '#f8fafc',
                       cursor: 'pointer',
+                      fontSize: modeFontSize,
+                      fontWeight: 700,
+                      minWidth: isTinyMobile ? '70px' : '84px',
                     }}
                   >
-                    Classic Mode
+                    Mode {showModeMenu ? '▲' : '▼'}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setMode('modern')}
-                    style={{
-                      padding: '0.4rem 0.75rem',
-                      borderRadius: '0.5rem',
-                      border: mode === 'modern' ? '1px solid #38bdf8' : '1px solid #334155',
-                      background: mode === 'modern' ? '#0b3a63' : '#0f172a',
-                      color: '#f8fafc',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Modern Mode
-                  </button>
-                </div>
-              </div>
 
-              <div style={{ width: '100%', overflow: 'auto', borderRadius: '0.75rem', border: '1px solid #334155', background: '#000' }}>
+                  {showModeMenu && (
+                    <div style={{ marginTop: '0.35rem', display: 'grid', gap: '0.35rem', background: 'rgba(2,6,23,0.95)', border: '1px solid #334155', borderRadius: '0.6rem', padding: isSmallMobile ? '0.32rem' : '0.4rem', minWidth: menuMinWidth, boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode('classic');
+                          setShowModeMenu(false);
+                        }}
+                        style={{
+                          padding: modePadding,
+                          borderRadius: '0.45rem',
+                          border: mode === 'classic' ? '1px solid #fafafa' : '1px solid #334155',
+                          background: mode === 'classic' ? '#1f2937' : '#0f172a',
+                          color: '#f8fafc',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontSize: modeFontSize,
+                        }}
+                      >
+                        Classic Mode
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode('modern');
+                          setShowModeMenu(false);
+                        }}
+                        style={{
+                          padding: modePadding,
+                          borderRadius: '0.45rem',
+                          border: mode === 'modern' ? '1px solid #38bdf8' : '1px solid #334155',
+                          background: mode === 'modern' ? '#0b3a63' : '#0f172a',
+                          color: '#f8fafc',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontSize: modeFontSize,
+                        }}
+                      >
+                        Modern Mode
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div ref={levelMenuRef} style={{ position: 'absolute', top: levelToggleTop, right: levelToggleRight, zIndex: 9 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowLevelMenu((prev) => !prev);
+                      setShowModeMenu(false);
+                    }}
+                    aria-label="Open level menu"
+                    style={{
+                      padding: modePadding,
+                      borderRadius: '0.45rem',
+                      border: '1px solid #334155',
+                      background: 'rgba(15,23,42,0.92)',
+                      color: '#f8fafc',
+                      cursor: 'pointer',
+                      fontSize: modeFontSize,
+                      fontWeight: 700,
+                      minWidth: isTinyMobile ? '70px' : '84px',
+                    }}
+                  >
+                    Level {showLevelMenu ? '▲' : '▼'}
+                  </button>
+
+                  {showLevelMenu && (
+                    <div style={{ marginTop: '0.35rem', display: 'grid', gap: '0.35rem', background: 'rgba(2,6,23,0.95)', border: '1px solid #334155', borderRadius: '0.6rem', padding: isSmallMobile ? '0.32rem' : '0.4rem', minWidth: menuMinWidth, boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLevel(1);
+                          setShowLevelMenu(false);
+                        }}
+                        style={{
+                          padding: modePadding,
+                          borderRadius: '0.45rem',
+                          border: level === 1 ? '1px solid #f8fafc' : '1px solid #334155',
+                          background: level === 1 ? '#1f2937' : '#0f172a',
+                          color: '#f8fafc',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontSize: modeFontSize,
+                        }}
+                      >
+                        Level 1 (Slow)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLevel(2);
+                          setShowLevelMenu(false);
+                        }}
+                        style={{
+                          padding: modePadding,
+                          borderRadius: '0.45rem',
+                          border: level === 2 ? '1px solid #f8fafc' : '1px solid #334155',
+                          background: level === 2 ? '#1f2937' : '#0f172a',
+                          color: '#f8fafc',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontSize: modeFontSize,
+                        }}
+                      >
+                        Level 2 (Medium)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLevel(3);
+                          setShowLevelMenu(false);
+                        }}
+                        style={{
+                          padding: modePadding,
+                          borderRadius: '0.45rem',
+                          border: level === 3 ? '1px solid #38bdf8' : '1px solid #334155',
+                          background: level === 3 ? '#0b3a63' : '#0f172a',
+                          color: '#f8fafc',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontSize: modeFontSize,
+                        }}
+                      >
+                        Level 3 (Current)
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <canvas
                   ref={canvasRef}
                   width={CANVAS_WIDTH}
                   height={CANVAS_HEIGHT}
-                  style={{ width: '100%', maxHeight: '72vh', display: 'block' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginTop: '0.85rem', color: '#94a3b8', fontSize: '0.92rem' }}>
-                <span>Controls: ← → / A D to move, Space / ↑ / W to jump</span>
-                <span>Difficulty rises over time • Enemies use patrol AI</span>
-              </div>
-
-              {status === 'gameover' && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
                   style={{
-                    position: 'absolute',
-                    inset: '6rem 1.2rem 1.2rem',
-                    background: 'rgba(2, 6, 23, 0.78)',
-                    borderRadius: '0.8rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backdropFilter: 'blur(2px)',
+                    width: '100%',
+                    height: 'auto',
+                    aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}`,
+                    minHeight: canvasMinHeight,
+                    maxHeight: canvasMaxHeight,
+                    display: 'block',
+                    touchAction: 'none',
                   }}
-                >
-                  <div style={{ textAlign: 'center', color: '#f8fafc' }}>
-                    <h2 style={{ marginBottom: '0.4rem' }}>Game Over</h2>
-                    <p style={{ marginBottom: '0.9rem' }}>Final Score: {score} | Coins: {coins}</p>
+                />
+
+                {status === 'gameover' && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{
+                      position: 'absolute',
+                      inset: overlayInset,
+                      background: 'rgba(2, 6, 23, 0.78)',
+                      borderRadius: isSmallMobile ? '0.6rem' : '0.8rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backdropFilter: 'blur(2px)',
+                      zIndex: 10,
+                    }}
+                  >
+                    <div style={{ textAlign: 'center', color: '#f8fafc', padding: isTinyMobile ? '0.6rem' : '1rem' }}>
+                      <h2 style={{ marginBottom: '0.4rem', fontSize: isSmallMobile ? '1.35rem' : '1.8rem' }}>Game Over</h2>
+                      <p style={{ marginBottom: '0.9rem', fontSize: isSmallMobile ? '0.9rem' : '1rem' }}>Final Score: {score} | Coins: {coins} | Level: {level}</p>
+                      <button
+                        type="button"
+                        onClick={resetAll}
+                        style={{
+                          padding: isSmallMobile ? '0.54rem 0.95rem' : '0.6rem 1.1rem',
+                          borderRadius: '0.55rem',
+                          border: 'none',
+                          background: '#22c55e',
+                          color: '#052e16',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          fontSize: isSmallMobile ? '0.85rem' : '0.95rem',
+                        }}
+                      >
+                        Restart Game
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Mobile Touch Controls */}
+              {isMobile && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: isSmallMobile ? '0.9rem' : '1.2rem', padding: isSmallMobile ? '0 0.1rem' : '0 0.5rem', gap: '0.9rem', flexWrap: isTinyMobile ? 'wrap' : 'nowrap' }}>
+                    <div style={{ display: 'flex', gap: isSmallMobile ? '0.75rem' : '1.2rem' }}>
+                      <button
+                        type="button"
+                        onTouchStart={(e) => { e.preventDefault(); keysRef.current.left = true; }}
+                        onTouchEnd={(e) => { e.preventDefault(); keysRef.current.left = false; }}
+                        onTouchCancel={(e) => { e.preventDefault(); keysRef.current.left = false; }}
+                        onMouseDown={(e) => { e.preventDefault(); keysRef.current.left = true; }}
+                        onMouseUp={(e) => { e.preventDefault(); keysRef.current.left = false; }}
+                        onMouseLeave={(e) => { e.preventDefault(); keysRef.current.left = false; }}
+                        style={{
+                          width: `${controlBtnSize}px`, height: `${controlBtnSize}px`, borderRadius: '50%', background: 'linear-gradient(135deg, #334155, #1e293b)', border: 'none', color: 'white', fontSize: isSmallMobile ? '1.25rem' : '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none', touchAction: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
+                        }}
+                      >
+                        ◀
+                      </button>
+                      <button
+                        type="button"
+                        onTouchStart={(e) => { e.preventDefault(); keysRef.current.right = true; }}
+                        onTouchEnd={(e) => { e.preventDefault(); keysRef.current.right = false; }}
+                        onTouchCancel={(e) => { e.preventDefault(); keysRef.current.right = false; }}
+                        onMouseDown={(e) => { e.preventDefault(); keysRef.current.right = true; }}
+                        onMouseUp={(e) => { e.preventDefault(); keysRef.current.right = false; }}
+                        onMouseLeave={(e) => { e.preventDefault(); keysRef.current.right = false; }}
+                        style={{
+                          width: `${controlBtnSize}px`, height: `${controlBtnSize}px`, borderRadius: '50%', background: 'linear-gradient(135deg, #334155, #1e293b)', border: 'none', color: 'white', fontSize: isSmallMobile ? '1.25rem' : '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none', touchAction: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
+                        }}
+                      >
+                        ▶
+                      </button>
+                    </div>
                     <button
                       type="button"
-                      onClick={resetAll}
+                      onTouchStart={(e) => { e.preventDefault(); keysRef.current.jump = true; }}
+                      onTouchEnd={(e) => { e.preventDefault(); keysRef.current.jump = false; }}
+                      onTouchCancel={(e) => { e.preventDefault(); keysRef.current.jump = false; }}
+                      onMouseDown={(e) => { e.preventDefault(); keysRef.current.jump = true; }}
+                      onMouseUp={(e) => { e.preventDefault(); keysRef.current.jump = false; }}
+                      onMouseLeave={(e) => { e.preventDefault(); keysRef.current.jump = false; }}
                       style={{
-                        padding: '0.6rem 1.1rem',
-                        borderRadius: '0.55rem',
-                        border: 'none',
-                        background: '#22c55e',
-                        color: '#052e16',
-                        fontWeight: 700,
-                        cursor: 'pointer',
+                        width: `${jumpBtnSize}px`, height: `${jumpBtnSize}px`, borderRadius: '50%', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', border: 'none', color: 'white', fontSize: isSmallMobile ? '1.65rem' : '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none', touchAction: 'none', boxShadow: '0 6px 16px rgba(37,99,235,0.5)', marginLeft: isTinyMobile ? 'auto' : '0'
                       }}
                     >
-                      Restart Game
+                      ▲
                     </button>
                   </div>
-                </motion.div>
               )}
             </div>
           </motion.div>

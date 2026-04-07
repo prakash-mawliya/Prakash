@@ -24,10 +24,38 @@ const CricketGame = ({ isOpen, onClose }) => {
     const [highScore, setHighScore] = useState(0);
     const [leaderboard, setLeaderboard] = useState([]);
     const [bgmEnabled, setBgmEnabled] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [showModeMenu, setShowModeMenu] = useState(false);
+    const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            const width = window.innerWidth;
+            setViewportWidth(width);
+            setIsMobile(width <= 768 || 'ontouchstart' in window);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const scoreRef = useRef(0);
     const ballsRef = useRef(0);
     const wicketsRef = useRef(0);
+    const modeMenuRef = useRef(null);
+
+    useEffect(() => {
+        if (!showModeMenu) return undefined;
+
+        const closeOnOutsideClick = (event) => {
+            if (!modeMenuRef.current?.contains(event.target)) {
+                setShowModeMenu(false);
+            }
+        };
+
+        document.addEventListener('pointerdown', closeOnOutsideClick);
+        return () => document.removeEventListener('pointerdown', closeOnOutsideClick);
+    }, [showModeMenu]);
 
     const gameRef = useRef({
         bgScroll: 0,
@@ -282,6 +310,7 @@ const CricketGame = ({ isOpen, onClose }) => {
     const startGameInMode = useCallback((mode) => {
         setGameMode(mode);
         setGameState('playing');
+        setShowModeMenu(false);
         resetMatch();
         ensureAudio();
         setTimeout(() => {
@@ -441,15 +470,26 @@ const CricketGame = ({ isOpen, onClose }) => {
                 }
             } else {
                 const gradient = context.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
-                gradient.addColorStop(0, '#77c8ff');
-                gradient.addColorStop(0.52, '#e6f7ff');
-                gradient.addColorStop(0.53, '#69b44e');
-                gradient.addColorStop(1, '#3a7a35');
+                gradient.addColorStop(0, '#3b82f6');
+                gradient.addColorStop(0.45, '#60a5fa');
+                gradient.addColorStop(0.52, '#dbeafe');
+                gradient.addColorStop(0.53, '#65a30d');
+                gradient.addColorStop(1, '#22c55e');
                 context.fillStyle = gradient;
                 context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+                // Clouds with shadows
                 const cloudShift = (gameRef.current.bgScroll * 0.2) % (CANVAS_WIDTH + 180);
-                context.fillStyle = 'rgba(255,255,255,0.85)';
+                context.fillStyle = 'rgba(0,0,0,0.08)';
+                for (let i = -1; i < 5; i += 1) {
+                    const cx = i * 220 - cloudShift;
+                    context.beginPath();
+                    context.arc(cx + 46, 73, 24, 0, Math.PI * 2);
+                    context.arc(cx + 71, 68, 28, 0, Math.PI * 2);
+                    context.arc(cx + 96, 75, 22, 0, Math.PI * 2);
+                    context.fill();
+                }
+                context.fillStyle = 'rgba(255,255,255,0.92)';
                 for (let i = -1; i < 5; i += 1) {
                     const cx = i * 220 - cloudShift;
                     context.beginPath();
@@ -502,13 +542,32 @@ const CricketGame = ({ isOpen, onClose }) => {
                 context.fill();
                 context.fillRect(bx - 7, by, 14, 35);
             } else {
-                context.fillStyle = '#2563eb';
+                // Batsman shirt
+                context.fillStyle = '#1e40af';
+                context.shadowColor = 'rgba(0,0,0,0.3)';
+                context.shadowBlur = 4;
+                context.shadowOffsetX = 2;
+                context.shadowOffsetY = 2;
                 context.fillRect(bx - 10, by, 20, 28);
-                context.fillStyle = '#0f172a';
+                context.shadowColor = 'transparent';
+                
+                // Batsman pants
+                context.fillStyle = '#1f2937';
                 context.fillRect(bx - 10, by + 27, 20, 20);
+                
+                // Head
                 context.fillStyle = '#f8d2b7';
                 context.beginPath();
                 context.arc(bx, by - 12, 8, 0, Math.PI * 2);
+                context.fill();
+                
+                // Face details
+                context.fillStyle = '#374151';
+                context.beginPath();
+                context.arc(bx - 3, by - 13, 1.5, 0, Math.PI * 2);
+                context.fill();
+                context.beginPath();
+                context.arc(bx + 3, by - 13, 1.5, 0, Math.PI * 2);
                 context.fill();
             }
 
@@ -516,16 +575,46 @@ const CricketGame = ({ isOpen, onClose }) => {
             context.translate(bx + 6, by + 10);
             const swingAngle = batsman.isSwinging ? -Math.PI / 1.9 : Math.PI / 3.5;
             context.rotate(swingAngle);
-            context.fillStyle = isClassic ? '#1d2a16' : '#8b5a2b';
+            context.fillStyle = '#92400e';
+            context.shadowColor = 'rgba(0,0,0,0.4)';
+            context.shadowBlur = 3;
             context.fillRect(-2, 0, 6, 44);
+            context.shadowColor = 'transparent';
             context.restore();
 
             const ball = gameRef.current.ball;
             if (ball.active) {
+                // Ball shadow
+                if (!isClassic) {
+                    context.fillStyle = 'rgba(0,0,0,0.2)';
+                    context.beginPath();
+                    context.arc(ball.x + 2, ball.y + 3, ball.r * 0.8, 0, Math.PI * 2);
+                    context.fill();
+                }
+                
+                // Ball glow
+                if (!isClassic) {
+                    context.strokeStyle = 'rgba(220,38,38,0.3)';
+                    context.lineWidth = 3;
+                    context.beginPath();
+                    context.arc(ball.x, ball.y, ball.r + 2, 0, Math.PI * 2);
+                    context.stroke();
+                }
+                
+                // Ball
                 context.beginPath();
                 context.fillStyle = isClassic ? '#1d2a16' : '#dc2626';
                 context.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
                 context.fill();
+                
+                // Ball seam
+                if (!isClassic) {
+                    context.strokeStyle = '#ffffff';
+                    context.lineWidth = 1.2;
+                    context.beginPath();
+                    context.arc(ball.x, ball.y, ball.r - 1, 0, Math.PI * 2);
+                    context.stroke();
+                }
             }
 
             gameRef.current.particles.forEach((particle) => {
@@ -586,6 +675,30 @@ const CricketGame = ({ isOpen, onClose }) => {
         handleHit();
     };
 
+    const isTablet = viewportWidth <= 1024;
+    const isSmallMobile = viewportWidth <= 480;
+    const isTinyMobile = viewportWidth <= 380;
+    const frameInset = gameMode === 'classic'
+        ? (isSmallMobile ? '0.6rem' : '0.9rem')
+        : (isSmallMobile ? '0.35rem' : '0.5rem');
+    const gameContainerPadding = gameMode === 'classic'
+        ? (isSmallMobile ? '0.55rem' : '0.8rem')
+        : (isSmallMobile ? '0.35rem' : '0.5rem');
+    const hudTop = gameMode === 'classic'
+        ? (isSmallMobile ? '1rem' : '1.35rem')
+        : (isSmallMobile ? '0.72rem' : '1rem');
+    const hudSide = gameMode === 'classic'
+        ? (isSmallMobile ? '1rem' : '1.35rem')
+        : (isSmallMobile ? '0.72rem' : '1rem');
+    const modeTop = gameMode === 'classic'
+        ? (isSmallMobile ? '3.05rem' : '4.1rem')
+        : (isSmallMobile ? '2.7rem' : '3.55rem');
+    const hudFontSize = isTinyMobile ? '0.74rem' : isSmallMobile ? '0.79rem' : '0.9rem';
+    const hudPadding = isTinyMobile ? '0.24rem 0.45rem' : isSmallMobile ? '0.28rem 0.5rem' : '0.32rem 0.58rem';
+    const menuHeadingSize = isTinyMobile ? '1.28rem' : isSmallMobile ? '1.45rem' : '2rem';
+    const menuTextSize = isSmallMobile ? '0.88rem' : '1rem';
+    const actionBtnPadding = isSmallMobile ? '0.56rem 0.82rem' : '0.65rem 1rem';
+
     if (!isOpen) return null;
 
     return (
@@ -603,80 +716,157 @@ const CricketGame = ({ isOpen, onClose }) => {
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.92, opacity: 0, y: 24 }}
                     onClick={(event) => event.stopPropagation()}
-                    style={{ maxWidth: '940px', background: '#020617', border: '1px solid #1e293b' }}
+                    style={{
+                        width: '100%',
+                        maxWidth: isTablet ? '98vw' : '940px',
+                        maxHeight: isMobile ? '96vh' : '92vh',
+                        overflowY: 'auto',
+                        background: '#020617',
+                        border: '1px solid #1e293b',
+                    }}
                 >
-                    <div className="modal-header" style={{ background: 'transparent', borderBottom: '1px solid #1e293b', alignItems: 'center' }}>
-                        <h3 style={{ color: '#f8fafc' }}>Nokia Cricket Remastered</h3>
+                    <div className="modal-header" style={{ background: 'transparent', borderBottom: '1px solid #1e293b', alignItems: 'center', padding: isSmallMobile ? '1rem' : '1.5rem' }}>
+                        <h3 style={{ color: '#f8fafc', fontSize: isSmallMobile ? '1.22rem' : '1.5rem' }}>Nokia Cricket Remastered</h3>
                         <button className="close-btn" onClick={onClose}>&times;</button>
                     </div>
 
-                    <div className="calculator-content" style={{ padding: '1rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.7rem', flexWrap: 'wrap', marginBottom: '0.8rem' }}>
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                <span style={{ background: '#0f172a', color: '#e2e8f0', padding: '0.35rem 0.65rem', borderRadius: '0.45rem', border: '1px solid #334155' }}>Score: {score}</span>
-                                <span style={{ background: '#0f172a', color: '#e2e8f0', padding: '0.35rem 0.65rem', borderRadius: '0.45rem', border: '1px solid #334155' }}>Balls: {balls}</span>
-                                <span style={{ background: '#0f172a', color: '#e2e8f0', padding: '0.35rem 0.65rem', borderRadius: '0.45rem', border: '1px solid #334155' }}>Wickets: {wickets}/{MAX_WICKETS}</span>
-                                <span style={{ background: '#0f172a', color: '#e2e8f0', padding: '0.35rem 0.65rem', borderRadius: '0.45rem', border: '1px solid #334155' }}>High: {highScore}</span>
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
-                                <button
-                                    type="button"
-                                    onClick={() => setGameMode('classic')}
-                                    style={{
-                                        padding: '0.4rem 0.7rem',
-                                        borderRadius: '0.45rem',
-                                        border: gameMode === 'classic' ? '1px solid #f8fafc' : '1px solid #334155',
-                                        background: gameMode === 'classic' ? '#1f2937' : '#0f172a',
-                                        color: '#f8fafc',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    Classic
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setGameMode('modern')}
-                                    style={{
-                                        padding: '0.4rem 0.7rem',
-                                        borderRadius: '0.45rem',
-                                        border: gameMode === 'modern' ? '1px solid #38bdf8' : '1px solid #334155',
-                                        background: gameMode === 'modern' ? '#0b3a63' : '#0f172a',
-                                        color: '#f8fafc',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    Modern
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const next = !bgmEnabled;
-                                        setBgmEnabled(next);
-                                        if (next) ensureAudio();
-                                    }}
-                                    style={{
-                                        padding: '0.4rem 0.7rem',
-                                        borderRadius: '0.45rem',
-                                        border: '1px solid #334155',
-                                        background: bgmEnabled ? '#14532d' : '#0f172a',
-                                        color: '#f8fafc',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    {bgmEnabled ? 'BGM On' : 'BGM Off'}
-                                </button>
-                            </div>
-                        </div>
-
+                    <div className="calculator-content" style={{ padding: isSmallMobile ? '0.7rem' : '1rem' }}>
                         <div style={{
                             background: gameMode === 'classic' ? '#7f8d73' : '#000',
-                            border: gameMode === 'classic' ? '14px solid #2f3d25' : '2px solid #334155',
-                            borderRadius: gameMode === 'classic' ? '22px' : '14px',
+                            border: gameMode === 'classic' ? (isSmallMobile ? '10px solid #2f3d25' : '14px solid #2f3d25') : '2px solid #334155',
+                            borderRadius: gameMode === 'classic' ? (isSmallMobile ? '16px' : '22px') : (isSmallMobile ? '12px' : '14px'),
                             boxShadow: gameMode === 'classic' ? 'inset 0 0 0 3px #99a98b, 0 14px 30px rgba(0,0,0,0.4)' : '0 14px 30px rgba(0,0,0,0.45)',
-                            padding: gameMode === 'classic' ? '0.8rem' : '0.5rem',
+                            padding: gameContainerPadding,
                             position: 'relative',
+                            minHeight: isSmallMobile ? '43vh' : isMobile ? '50vh' : 'auto',
                         }}>
+                            <div style={{
+                                position: 'absolute',
+                                top: hudTop,
+                                left: hudSide,
+                                zIndex: 8,
+                                display: 'flex',
+                                gap: '0.45rem',
+                                flexWrap: 'wrap',
+                                maxWidth: isSmallMobile ? '66%' : '60%',
+                            }}>
+                                <span style={{ background: 'rgba(15,23,42,0.88)', color: '#e2e8f0', padding: hudPadding, borderRadius: '0.45rem', border: '1px solid #334155', fontWeight: 600, fontSize: hudFontSize }}>Runs: {score}</span>
+                                <span style={{ background: 'rgba(15,23,42,0.88)', color: '#e2e8f0', padding: hudPadding, borderRadius: '0.45rem', border: '1px solid #334155', fontWeight: 600, fontSize: hudFontSize }}>Wkts: {wickets}/{MAX_WICKETS}</span>
+                            </div>
+
+                            <div style={{
+                                position: 'absolute',
+                                top: hudTop,
+                                right: hudSide,
+                                zIndex: 8,
+                                display: 'flex',
+                                gap: '0.45rem',
+                                flexWrap: 'wrap',
+                                justifyContent: 'flex-end',
+                                maxWidth: isSmallMobile ? '46%' : '40%',
+                            }}>
+                                <span style={{ background: 'rgba(15,23,42,0.88)', color: '#e2e8f0', padding: hudPadding, borderRadius: '0.45rem', border: '1px solid #334155', fontWeight: 600, fontSize: hudFontSize }}>Balls: {balls}</span>
+                                <span style={{ background: 'rgba(15,23,42,0.88)', color: '#e2e8f0', padding: hudPadding, borderRadius: '0.45rem', border: '1px solid #334155', fontWeight: 600, fontSize: hudFontSize }}>High: {highScore}</span>
+                            </div>
+
+                            <div
+                                ref={modeMenuRef}
+                                style={{
+                                    position: 'absolute',
+                                    top: modeTop,
+                                    right: hudSide,
+                                    zIndex: 9,
+                                }}
+                            >
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModeMenu((prev) => !prev)}
+                                    style={{
+                                        padding: isSmallMobile ? '0.3rem 0.58rem' : '0.34rem 0.72rem',
+                                        borderRadius: '0.55rem',
+                                        border: '1px solid #334155',
+                                        background: 'rgba(2,6,23,0.9)',
+                                        color: '#f8fafc',
+                                        cursor: 'pointer',
+                                        fontWeight: 700,
+                                        fontSize: isSmallMobile ? '0.75rem' : '0.82rem',
+                                    }}
+                                >
+                                    Mode {showModeMenu ? '▲' : '▼'}
+                                </button>
+
+                                {showModeMenu && (
+                                    <div style={{
+                                        marginTop: '0.35rem',
+                                        display: 'grid',
+                                        gap: '0.35rem',
+                                        background: 'rgba(2,6,23,0.95)',
+                                        border: '1px solid #334155',
+                                        borderRadius: '0.6rem',
+                                        padding: isSmallMobile ? '0.32rem' : '0.4rem',
+                                        minWidth: isSmallMobile ? '112px' : '130px',
+                                        boxShadow: '0 10px 30px rgba(0,0,0,0.4)',
+                                    }}>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setGameMode('classic');
+                                                setShowModeMenu(false);
+                                            }}
+                                            style={{
+                                                padding: '0.36rem 0.6rem',
+                                                borderRadius: '0.45rem',
+                                                border: gameMode === 'classic' ? '1px solid #f8fafc' : '1px solid #334155',
+                                                background: gameMode === 'classic' ? '#1f2937' : '#0f172a',
+                                                color: '#f8fafc',
+                                                cursor: 'pointer',
+                                                textAlign: 'left',
+                                            }}
+                                        >
+                                            Classic
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setGameMode('modern');
+                                                setShowModeMenu(false);
+                                            }}
+                                            style={{
+                                                padding: '0.36rem 0.6rem',
+                                                borderRadius: '0.45rem',
+                                                border: gameMode === 'modern' ? '1px solid #38bdf8' : '1px solid #334155',
+                                                background: gameMode === 'modern' ? '#0b3a63' : '#0f172a',
+                                                color: '#f8fafc',
+                                                cursor: 'pointer',
+                                                textAlign: 'left',
+                                            }}
+                                        >
+                                            Modern
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const next = !bgmEnabled;
+                                                setBgmEnabled(next);
+                                                if (next) ensureAudio();
+                                                setShowModeMenu(false);
+                                            }}
+                                            style={{
+                                                padding: '0.36rem 0.6rem',
+                                                borderRadius: '0.45rem',
+                                                border: '1px solid #334155',
+                                                background: bgmEnabled ? '#14532d' : '#0f172a',
+                                                color: '#f8fafc',
+                                                cursor: 'pointer',
+                                                textAlign: 'left',
+                                            }}
+                                        >
+                                            {bgmEnabled ? 'BGM On' : 'BGM Off'}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
                             {gameMode === 'classic' && (
                                 <div style={{
                                     position: 'absolute',
@@ -695,26 +885,35 @@ const CricketGame = ({ isOpen, onClose }) => {
                                 width={CANVAS_WIDTH}
                                 height={CANVAS_HEIGHT}
                                 onClick={handleCanvasTap}
-                                style={{ width: '100%', maxHeight: '70vh', display: 'block', borderRadius: gameMode === 'classic' ? '14px' : '10px', cursor: 'pointer' }}
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                    maxHeight: isSmallMobile ? '58vh' : isMobile ? '72vh' : '70vh',
+                                    minHeight: isSmallMobile ? '42vh' : isMobile ? '48vh' : 'auto',
+                                    aspectRatio: `${CANVAS_WIDTH} / ${CANVAS_HEIGHT}`,
+                                    display: 'block',
+                                    borderRadius: gameMode === 'classic' ? '14px' : '10px',
+                                    cursor: 'pointer',
+                                }}
                             />
 
                             {gameState === 'menu' && (
-                                <div style={{ position: 'absolute', inset: gameMode === 'classic' ? '0.9rem' : '0.5rem', background: 'rgba(2,6,23,0.72)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <div style={{ textAlign: 'center', color: '#f8fafc', padding: '1rem' }}>
-                                        <h2 style={{ margin: '0 0 0.8rem 0', fontSize: '2rem' }}>Nokia Cricket Remastered</h2>
-                                        <p style={{ margin: '0 0 1rem 0', color: '#cbd5e1' }}>Space / Tap = Hit Shot • Timing controls shot type</p>
+                                <div style={{ position: 'absolute', inset: frameInset, background: 'rgba(2,6,23,0.72)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div style={{ textAlign: 'center', color: '#f8fafc', padding: isSmallMobile ? '0.6rem' : '1rem' }}>
+                                        <h2 style={{ margin: '0 0 0.8rem 0', fontSize: menuHeadingSize, lineHeight: 1.15 }}>Nokia Cricket Remastered</h2>
+                                        <p style={{ margin: '0 0 1rem 0', color: '#cbd5e1', fontSize: menuTextSize, lineHeight: 1.35 }}>Space / Tap = Hit Shot • Timing controls shot type</p>
                                         <div style={{ display: 'flex', gap: '0.7rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                                             <button
                                                 type="button"
                                                 onClick={() => startGameInMode('classic')}
-                                                style={{ padding: '0.65rem 1rem', borderRadius: '0.55rem', border: 'none', background: '#334155', color: '#f8fafc', cursor: 'pointer', fontWeight: 700 }}
+                                                style={{ padding: actionBtnPadding, borderRadius: '0.55rem', border: 'none', background: '#334155', color: '#f8fafc', cursor: 'pointer', fontWeight: 700, fontSize: isSmallMobile ? '0.85rem' : '0.95rem' }}
                                             >
                                                 Play Classic
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => startGameInMode('modern')}
-                                                style={{ padding: '0.65rem 1rem', borderRadius: '0.55rem', border: 'none', background: '#0284c7', color: '#f8fafc', cursor: 'pointer', fontWeight: 700 }}
+                                                style={{ padding: actionBtnPadding, borderRadius: '0.55rem', border: 'none', background: '#0284c7', color: '#f8fafc', cursor: 'pointer', fontWeight: 700, fontSize: isSmallMobile ? '0.85rem' : '0.95rem' }}
                                             >
                                                 Play Modern
                                             </button>
@@ -724,14 +923,14 @@ const CricketGame = ({ isOpen, onClose }) => {
                             )}
 
                             {gameState === 'gameover' && (
-                                <div style={{ position: 'absolute', inset: gameMode === 'classic' ? '0.9rem' : '0.5rem', background: 'rgba(2,6,23,0.78)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <div style={{ textAlign: 'center', color: '#f8fafc', padding: '1rem' }}>
-                                        <h2 style={{ margin: '0 0 0.5rem 0' }}>Game Over</h2>
-                                        <p style={{ margin: '0 0 1rem 0', color: '#cbd5e1' }}>Score: {score} • Balls: {balls}</p>
+                                <div style={{ position: 'absolute', inset: frameInset, background: 'rgba(2,6,23,0.78)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div style={{ textAlign: 'center', color: '#f8fafc', padding: isSmallMobile ? '0.6rem' : '1rem' }}>
+                                        <h2 style={{ margin: '0 0 0.5rem 0', fontSize: isSmallMobile ? '1.35rem' : '1.8rem' }}>Game Over</h2>
+                                        <p style={{ margin: '0 0 1rem 0', color: '#cbd5e1', fontSize: isSmallMobile ? '0.9rem' : '1rem' }}>Score: {score} • Balls: {balls}</p>
                                         <button
                                             type="button"
                                             onClick={() => startGameInMode(gameMode)}
-                                            style={{ padding: '0.62rem 1rem', borderRadius: '0.55rem', border: 'none', background: '#22c55e', color: '#052e16', cursor: 'pointer', fontWeight: 700 }}
+                                            style={{ padding: actionBtnPadding, borderRadius: '0.55rem', border: 'none', background: '#22c55e', color: '#052e16', cursor: 'pointer', fontWeight: 700, fontSize: isSmallMobile ? '0.85rem' : '0.95rem' }}
                                         >
                                             Restart Match
                                         </button>
@@ -740,25 +939,37 @@ const CricketGame = ({ isOpen, onClose }) => {
                             )}
                         </div>
 
-                        <div style={{ marginTop: '0.75rem', display: 'flex', justifyContent: 'space-between', gap: '0.8rem', flexWrap: 'wrap', color: '#94a3b8', fontSize: '0.9rem' }}>
+                        <div style={{
+                            marginTop: '0.75rem',
+                            display: 'flex',
+                            justifyContent: isMobile ? 'flex-start' : 'space-between',
+                            alignItems: isMobile ? 'flex-start' : 'center',
+                            flexDirection: isMobile ? 'column' : 'row',
+                            gap: isSmallMobile ? '0.35rem' : '0.55rem',
+                            color: '#94a3b8',
+                            fontSize: isSmallMobile ? '0.82rem' : '0.9rem',
+                            lineHeight: 1.35,
+                        }}>
                             <span>Controls: Space / Tap to shoot • Early/Late timing affects shot</span>
                             <span>AI bowler speed increases over time</span>
                         </div>
 
-                        <div style={{ marginTop: '0.75rem', border: '1px solid #1f2937', borderRadius: '0.6rem', padding: '0.65rem', background: '#0b1220' }}>
+                        {gameState === 'gameover' && (
+                        <div style={{ marginTop: '0.75rem', border: '1px solid #1f2937', borderRadius: '0.6rem', padding: isSmallMobile ? '0.5rem' : '0.65rem', background: '#0b1220' }}>
                             <p style={{ margin: '0 0 0.45rem 0', color: '#e2e8f0', fontWeight: 600 }}>Leaderboard</p>
                             {leaderboard.length === 0 ? (
-                                <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>No scores yet. Start a match and set a record.</p>
+                                <p style={{ margin: 0, color: '#94a3b8', fontSize: isSmallMobile ? '0.82rem' : '0.9rem' }}>No scores yet. Start a match and set a record.</p>
                             ) : (
                                 <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
                                     {leaderboard.map((entry, index) => (
-                                        <span key={`${entry}-${index}`} style={{ background: '#111827', color: '#e2e8f0', padding: '0.32rem 0.6rem', borderRadius: '0.45rem', border: '1px solid #334155', fontSize: '0.86rem' }}>
+                                        <span key={`${entry}-${index}`} style={{ background: '#111827', color: '#e2e8f0', padding: isSmallMobile ? '0.28rem 0.5rem' : '0.32rem 0.6rem', borderRadius: '0.45rem', border: '1px solid #334155', fontSize: isSmallMobile ? '0.78rem' : '0.86rem' }}>
                                             #{index + 1} {entry}
                                         </span>
                                     ))}
                                 </div>
                             )}
                         </div>
+                        )}
                     </div>
                 </motion.div>
             </motion.div>

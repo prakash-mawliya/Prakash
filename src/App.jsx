@@ -23,8 +23,8 @@ function App() {
       
       const options = {
         root: null,
-        rootMargin: '-20% 0px -20% 0px', 
-        threshold: 0.15
+        rootMargin: '0px',
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
       };
 
       observer = new IntersectionObserver((entries) => {
@@ -36,7 +36,13 @@ function App() {
             return;
           }
 
-          if (entry.isIntersecting) {
+          const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+          const viewportCenter = viewportHeight / 2;
+          const activationBand = viewportHeight * 0.18;
+          const elementCenter = entry.boundingClientRect.top + (entry.boundingClientRect.height / 2);
+          const isInCenterBand = Math.abs(elementCenter - viewportCenter) <= activationBand;
+
+          if (entry.isIntersecting && isInCenterBand) {
             entry.target.classList.add('mobile-hover');
           } else {
             entry.target.classList.remove('mobile-hover');
